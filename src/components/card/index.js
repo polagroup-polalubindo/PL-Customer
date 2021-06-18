@@ -29,22 +29,25 @@ export const CardProduct = ({ product }) => {
   }
 
   return (
-    <Grid item xs={5} style={{ margin: "0.2rem" }}>
+    <Grid item xs={5}>
       <Card style={{ height: "auto" }}>
         <CardMedia
           className={classes.media}
           image={product.fotoProduk}
           title={product.namaProduk}
         />
-        <CardContent>
-          <Typography className={classes.produkTitle} component="h6">
+        <CardContent style={{ padding: '0.3125rem 0.625rem 0rem' }}>
+          <Typography className={classes.produkTitle}>
             {product.namaProduk}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
+            {product.deskripsi.split(' ').length > 10 ? `${product.deskripsi.split(' ').slice(0,10).join(' ')} ...` : product.deskripsi}
+          </Typography>
+          <Typography component="p">
             Rp. {product.hargaSatuan.toLocaleString("id-ID")},-
           </Typography>
         </CardContent>
-        <CardActions disableSpacing>
+        <CardActions style={{ padding: '0.625rem' }} >
           {product.stock === 0 ? (
             <Typography variant="body2" color="textSecondary" component="p">
               Stock habis

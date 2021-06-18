@@ -7,9 +7,9 @@ export const useStyles = makeStyles({
   },
   produkTitle: {
     fontWeight: "bold",
-    fontSize: "0.8rem",
-    marginBottom: "1rem",
-    height: "4.8rem",
+    fontSize: "0.875rem",
+    // marginBottom: "1rem",
+    // height: "4.8rem",
   },
   beli: {
     backgroundColor: "red",

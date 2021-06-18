@@ -23,7 +23,7 @@ const Syaratketentuan = () => {
           <h3 style={{ textAlign: "center" }}>
             Pertanyaan Seputar Member Premier
           </h3>
-          <ol style={{ listStyle: "none" }}>
+          <ol style={{ listStyle: "none", padding: 0 }}>
             <li style={{ padding: "1rem 0" }}>
               <b>Q: Apa itu Member Premier?</b>
               <br />

@@ -6,7 +6,7 @@ export const useStyles = makeStyles({
     textAlign: "center",
     display: "flex",
     alignItems: "center",
-    marginLeft: "5%",
+    marginLeft: "5%"
   },
   boxText: {
     background: "#f6f7fb",
@@ -17,7 +17,7 @@ export const useStyles = makeStyles({
     padding: "1rem",
   },
   input: {
-    border: "1px solid black",
+    // border: "1px solid black",
     borderRadius: "2px",
     padding: "0.2rem 0.5rem",
   },

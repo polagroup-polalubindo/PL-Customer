@@ -6,6 +6,7 @@ import {
   Checkbox,
   Button,
   Paper,
+  FormHelperText,
 } from "@material-ui/core";
 import { useStyles } from "./styles";
 import { Context } from "../../context/globalState";
@@ -24,6 +25,10 @@ const PremierModal = ({ visible, handleClose }) => {
     noKtp: "",
     noNPWP: "",
   });
+  const [Error, setError] = useState({
+    ktpError: false,
+    npwpError: false
+  })
 
   const handleChecked = () => {
     setChecked(!checked);
@@ -42,6 +47,12 @@ const PremierModal = ({ visible, handleClose }) => {
       if (response.message) {
         handleClose();
         setInput({ ...input, noKtp: "", noNPWP: "" });
+      } else {
+        let newError = {
+          ktpError: response.errors.find(el => el.message.match('KTP')) ? true : false,
+          npwpError: response.errors.find(el => el.message.match('NPWP')) ? true : false,
+        }
+        setError(newError)
       }
     }
   };
@@ -103,7 +114,11 @@ const PremierModal = ({ visible, handleClose }) => {
             className={classes.input}
             placeholder="KTP"
             onChange={handleChange}
+            style={{ border: Error.ktpError ? "1px solid red" : "1px solid black" }}
           />
+          {
+            Error.ktpError && <FormHelperText style={{ color: "red", textAlign:'center' }}>No KTP sudah digunakan</FormHelperText>
+          }
         </Grid>
         <Grid xs={12} style={{ margin: "0.5rem 0" }}>
           <InputBase
@@ -113,7 +128,11 @@ const PremierModal = ({ visible, handleClose }) => {
             className={classes.input}
             placeholder="NPWP"
             onChange={handleChange}
+            style={{ border: Error.npwpError ? "1px solid red" : "1px solid black" }}
           />
+          {
+            Error.npwpError && <FormHelperText style={{ color: "red", textAlign:'center' }}>No NPWP sudah digunakan</FormHelperText>
+          }
         </Grid>
         <Grid xs={12}>
           <span style={{ color: checked ? "black" : "red" }}>
