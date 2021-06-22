@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import Slider from "react-slick";
 import useStyles from "./styles";
 import banner_1 from "./assets/Banner1-280.jpg";
 import banner_2 from "./assets/Banner2-280.jpg";
 import banner_3 from "./assets/Banner3-280.jpg";
 import { useHistory } from "react-router-dom";
+import { Context } from "../../context/globalState";
 
 export default function SimpleSlider() {
   const settings = {
@@ -17,6 +18,8 @@ export default function SimpleSlider() {
     autoplay: true,
     autoplaySpeed: 3500,
   };
+
+  const { refCode } = useContext(Context);
 
   const classes = useStyles();
   const history = useHistory();
@@ -33,7 +36,7 @@ export default function SimpleSlider() {
           <img
             src={banner_3}
             className={classes.img}
-            onClick={() => history.push("/s&k")}
+            onClick={() => history.push(refCode ? `/s&k?ref=${refCode}` : "/s&k")}
           />
         </div>
       </Slider>

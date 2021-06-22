@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   BottomNavigation,
   BottomNavigationAction,
@@ -15,11 +15,23 @@ import HelpIcon from "@material-ui/icons/Help";
 import { useHistory, useLocation } from "react-router";
 import { Context } from "../../context/globalState";
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
 export const BottomNav = () => {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
-  const { carts, totalPrice, refCode } = useContext(Context);
+  const query = useQuery();
+  const { carts, totalPrice, refCode, setRefCode } = useContext(Context);
+
+  useEffect(() => {
+    const queryParams = query.get("ref");
+    if (queryParams !== null) {
+      setRefCode(queryParams);
+    }
+  }, [])
 
   const allBottomActions = [
     {

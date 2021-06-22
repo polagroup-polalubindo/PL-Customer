@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Checkbox, Paper, Button } from "@material-ui/core";
 import { useStyles } from "./style";
 import { useHistory } from "react-router-dom";
 import logo from "./logo.png";
+import { Context } from "../../context/globalState";
 
 const Syaratketentuan = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { refCode } = useContext(Context);
   return (
     <div>
       <div
@@ -75,7 +77,7 @@ const Syaratketentuan = () => {
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Button
               style={{ background: "#f4e8e9", width: "100%" }}
-              onClick={() => history.push("/")}
+              onClick={() => history.push(refCode ? `/?ref=${refCode}` : "/")}
             >
               Kembali
             </Button>

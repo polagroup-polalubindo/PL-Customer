@@ -42,7 +42,7 @@ const CartPage = () => {
   const [servicePicked, setServicePicked] = useState("");
   const [checked, setCheked] = useState(ongkosKirim);
   function back() {
-    history.push("/");
+    history.push(!refCode ? "/" : `/?ref=${refCode}`);
     resetServices();
     setInformasiPembeli({ nama: "", email: "", phone: "" });
     addAddress("");

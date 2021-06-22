@@ -36,7 +36,10 @@ const PremierModal = ({ visible, handleClose }) => {
   };
 
   const handleChange = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    let newValue = "" + e.target.value
+    if (e.target.name === 'noKtp') newValue = newValue.slice(0, 16)
+    else newValue = newValue = newValue.slice(0, 15)
+    setInput({ ...input, [e.target.name]: newValue });
   };
 
   const handleSubmit = async () => {
@@ -117,7 +120,7 @@ const PremierModal = ({ visible, handleClose }) => {
             style={{ border: Error.ktpError ? "1px solid red" : "1px solid black" }}
           />
           {
-            Error.ktpError && <FormHelperText style={{ color: "red", textAlign:'center' }}>No KTP sudah digunakan</FormHelperText>
+            Error.ktpError && <FormHelperText style={{ color: "red", textAlign: 'center' }}>No KTP sudah digunakan</FormHelperText>
           }
         </Grid>
         <Grid xs={12} style={{ margin: "0.5rem 0" }}>
@@ -131,7 +134,7 @@ const PremierModal = ({ visible, handleClose }) => {
             style={{ border: Error.npwpError ? "1px solid red" : "1px solid black" }}
           />
           {
-            Error.npwpError && <FormHelperText style={{ color: "red", textAlign:'center' }}>No NPWP sudah digunakan</FormHelperText>
+            Error.npwpError && <FormHelperText style={{ color: "red", textAlign: 'center' }}>No NPWP sudah digunakan</FormHelperText>
           }
         </Grid>
         <Grid xs={12}>

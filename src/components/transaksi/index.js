@@ -114,15 +114,15 @@ const Transaksi = () => {
                   <Grid container spacing={3} alignItems="center">
                     <Grid item xs={3}>
                       <img
-                        src={item.Carts[0].Produk.fotoProduk}
-                        alt={item.Carts[0].Produk.namaProduk}
+                        src={item.Carts[0].Produk && item.Carts[0].Produk.fotoProduk}
+                        alt={item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}
                         width="50"
                         height="50"
                       />
                     </Grid>
                     <Grid item xs={5}>
                       <Typography variant="body2">
-                        <b> {item.Carts[0].Produk.namaProduk}</b>
+                        <b> {item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}</b>
                         <br />
                         {item.Carts.length} barang
                       </Typography>
@@ -200,15 +200,15 @@ const Transaksi = () => {
                   <Grid container spacing={2} alignItems="center">
                     <Grid item xs={3}>
                       <img
-                        src={item.Carts[0].Produk.fotoProduk}
-                        alt={item.Carts[0].Produk.namaProduk}
+                        src={item.Carts[0].Produk && item.Carts[0].Produk.fotoProduk}
+                        alt={item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}
                         width="50"
                         height="50"
                       />
                     </Grid>
                     <Grid item xs={9}>
                       <Typography variant="body2">
-                        <b> {item.Carts[0].Produk.namaProduk}</b>
+                        <b> {item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}</b>
                         <br />
                         {item.Carts[0].qty} barang
                       </Typography>
