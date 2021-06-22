@@ -5,8 +5,8 @@ import appReducers from "./appReducers";
 import Axios from "axios";
 
 const baseUrl = "http://157.230.248.17";
-// const baseUrl = 'http://localhost:80'
-// const baseUrl = 'http://localhost:4000'
+// const baseUrl = 'http://localhost:80';
+// const baseUrl = 'http://localhost:4000';
 const instance = Axios.create({
   baseURL: baseUrl,
 });
