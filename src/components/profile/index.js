@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import { Typography, Avatar } from "@material-ui/core";
-import { ArrowBack } from "@material-ui/icons";
+import { Typography, Avatar, TextField, Button } from "@material-ui/core";
+import { ArrowBack, Edit, Close } from "@material-ui/icons";
 import { useHistory } from "react-router";
 import useStyles from "./styles";
 import komisiLogo from "./asset/komisi.png";
@@ -22,9 +21,20 @@ export default function CenteredGrid() {
     resetLocal,
     setRefCode,
     logout,
+    editProfil,
   } = useContext(Context);
 
   const history = useHistory();
+  const [isEdit, setIsEdit] = useState(false)
+  const [dataUser, setDataUser] = useState({
+    nama: '',
+    email: '',
+    phone: '',
+    alamat: '',
+    totalPembelian: 0
+  })
+
+
   const back = () => {
     history.push(refCode ? `/?ref=${refCode}` : "/");
   };
@@ -41,6 +51,35 @@ export default function CenteredGrid() {
     fetchKomisiData();
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    userData && setDataUser({
+      nama: userData.nama,
+      email: userData.email,
+      phone: userData.phone,
+      alamat: userData.alamat,
+      totalPembelian: 0
+    })
+  }, [userData])
+
+  const handleChange = (e) => {
+    if (e.target.name === 'phone') {
+      if (!isNaN(e.target.value)) setDataUser({ ...dataUser, [e.target.name]: e.target.value })
+    } else {
+      setDataUser({ ...dataUser, [e.target.name]: e.target.value })
+    }
+  }
+
+  const handleIsEdit = async () => {
+    let newData = { nama: dataUser.nama }
+
+    if (userData.email !== dataUser.email) newData.email = dataUser.email
+    if (userData.phone !== dataUser.phone) newData.phone = dataUser.phone
+
+    await editProfil(userData.id, newData)
+    setIsEdit(!isEdit)
+  }
+
   return (
     <>
       <Paper className={classes.nav}>
@@ -59,58 +98,85 @@ export default function CenteredGrid() {
           justify="center"
           alignItems="center"
         >
-          {userData && (
-            <>
-              <Paper className={classes.profileBox} elevation={3}>
-                <Grid container style={{ margin: "1.5rem" }}>
-                  <Grid xs={6}>
-                    <Avatar style={{ width: "5rem", height: "5rem" }}>
-                      {userData.nama[0]}
-                    </Avatar>
+          <Paper className={classes.profileBox} elevation={3}>
+            <Grid container>
+              <Grid xs={3}>
+                <Avatar style={{ width: "5rem", height: "5rem", marginLeft: 20 }}>
+                  {dataUser.nama[0]}
+                </Avatar>
+              </Grid>
+              {
+                isEdit
+                  ? <Grid xs={8}>
+                    <TextField
+                      value={dataUser.nama}
+                      name='nama'
+                      style={{ marginBottom: 5, width: '100%' }}
+                      onChange={handleChange} />
+                    <TextField
+                      value={dataUser.email}
+                      name='email'
+                      style={{ marginBottom: 5, width: '100%' }}
+                      onChange={handleChange} />
+                    <TextField
+                      type="Number"
+                      value={dataUser.phone}
+                      name='phone'
+                      style={{ marginBottom: 5, width: '100%' }}
+                      onChange={handleChange} />
                   </Grid>
-                  <Grid
-                    xs={6}
-                    style={{ marginLeft: "-75px", marginTop: "1rem" }}
-                  >
-                    <Grid>{userData.nama}</Grid>
-                    <Grid style={{ margin: "0.2rem 0" }}>{userData.email}</Grid>
+                  : <Grid xs={8}>
+                    <Grid style={{ fontWeight: "bold" }}>{userData.nama}</Grid>
+                    <Grid style={{ margin: "0.2rem 0", color: "gray" }}>{userData.email}</Grid>
                     <Grid>{userData.phone}</Grid>
                   </Grid>
-                  <Grid xs={12} style={{ margin: "2rem 0 " }}>
-                    <Grid style={{ fontWeight: "bold" }}>Alamat : </Grid>
-                    <Grid>{userData.alamat}</Grid>
-                  </Grid>
+              }
+              <Grid xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
+                {
+                  isEdit
+                    ? <Close onClick={() => setIsEdit(!isEdit)} style={{ cursor: 'pointer' }} />
+                    : <Edit onClick={() => setIsEdit(!isEdit)} style={{ cursor: 'pointer' }} />
+                }
+              </Grid>
+            </Grid>
+
+            {
+              isEdit
+                ? <Button variant="contained" style={{ marginTop: 10 }} onClick={handleIsEdit}>simpan</Button>
+                : <Grid xs={12} style={{ margin: "1rem 20px" }}>
+                  <Grid style={{ fontWeight: "bold" }}>Alamat : </Grid>
+                  <Grid>{dataUser.alamat}</Grid>
                 </Grid>
-              </Paper>
-              <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                  <Grid
-                    container
-                    spacing={3}
-                    direction="row"
-                    justify="center"
-                    alignItems="center"
-                    style={{ color: "#000" }}
-                  >
-                    <Grid item xs={2}>
-                      <AccountBalanceWalletIcon />
+            }
+          </Paper>
+          <Grid item xs={12}>
+            <Paper className={classes.paper}>
+              <Grid
+                container
+                spacing={3}
+                direction="row"
+                justify="center"
+                alignItems="center"
+                style={{ color: "#000" }}
+              >
+                <Grid item xs={2}>
+                  <AccountBalanceWalletIcon />
+                </Grid>
+                <Grid item xs={6}>
+                  Total Pembelian
                     </Grid>
-                    <Grid item xs={6}>
-                      Total Pembelian
-                    </Grid>
-                    {komisi && (
-                      <Grid item xs={4}>
-                        Rp.{" "}
-                        {new Number(userData.totalPembelian).toLocaleString(
-                          "id-ID"
-                        )}
-                      </Grid>
+                {komisi && (
+                  <Grid item xs={4}>
+                    Rp.{" "}
+                    {new Number(dataUser.totalPembelian).toLocaleString(
+                      "id-ID"
                     )}
                   </Grid>
-                </Paper>
+                )}
               </Grid>
-            </>
-          )}
+            </Paper>
+          </Grid>
+
           <Grid item xs={12}>
             <Paper className={classes.paper}>
               <Grid

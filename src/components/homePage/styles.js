@@ -26,7 +26,7 @@ export const useStyles = makeStyles({
   produkCard: {
     display: "flex",
     flexWrap: "wrap",
-    justifyContent: "center",
+    justifyContent: "space-between",
     marginTop: "1rem",
     // marginBottom: "8rem",
   },

@@ -171,7 +171,7 @@ const HomePage = () => {
           visible={visible}
           handleClose={() => setVisible(!visible)}
         />
-        <Grid container spacing={2} className={classes.produkCard} style={{ marginBottom: carts.length > 0 ? "8rem" : "4rem" }}>
+        <Grid container spacing={2} className={classes.produkCard} style={{ marginBottom: carts.length > 0 ? "8rem" : "4rem", padding: '0px 20px' }}>
           {!selectedBrand
             ? products.map((product) => (
                 <CardProduct product={product} key={product.id} />

@@ -336,6 +336,17 @@ export const ContextProvider = (props) => {
     data = await data.json();
     return data;
   };
+
+  const editProfil = async (id, newData) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/customer/${id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newData),
+    });
+    fetchUserData()
+  };
+
   return (
     <Context.Provider
       value={{
@@ -387,6 +398,7 @@ export const ContextProvider = (props) => {
         resetAddress,
         logout,
         pesananSelesai,
+        editProfil,
       }}
     >
       {props.children}

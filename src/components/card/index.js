@@ -29,7 +29,7 @@ export const CardProduct = ({ product }) => {
   }
 
   return (
-    <Grid item xs={5}>
+    <Grid item xs={6}>
       <Card style={{ height: "auto" }}>
         <CardMedia
           className={classes.media}

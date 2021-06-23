@@ -62,7 +62,7 @@ export const useStyle = makeStyles((theme) => ({
     justifyContent: "center",
     flexDirection: "column",
     margin: "1rem 0.5rem",
-    padding: "0.5rem",
+    padding: "1rem",
     borderRadius: "10px",
     width: "100%",
   },

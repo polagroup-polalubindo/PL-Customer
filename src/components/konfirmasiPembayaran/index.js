@@ -30,6 +30,8 @@ const KonfirmasiPembayaran = () => {
   const [bankAsal, setBankAsal] = useState("Bank Asal");
   const [bankTujuan, setBankTujuan] = useState("Bank Tujuan");
   const transaksiData = JSON.parse(localStorage.getItem("transaksi"));
+  const minDate = transaksiData ? transaksiData.createdAt.slice(0,10) : null;
+  const maxDate = transaksiData ? transaksiData.expiredAt.slice(0,10) : null;
 
   const back = () => {
     history.push(refCode ? `/pembayaran?ref=${refCode}` : "/pembayaran");
@@ -153,6 +155,7 @@ const KonfirmasiPembayaran = () => {
           </Grid>
           <Grid item xs={10}>
             <TextField
+              InputProps={{ inputProps: { min: minDate, max: maxDate } }}
               value={tanggal}
               onChange={(e) => setTanggal(e.target.value)}
               type="date"
