@@ -109,6 +109,7 @@ export const ContextProvider = (props) => {
       body: JSON.stringify(newdata),
     });
     data = await data.json();
+    await fetchUserData()
     return data;
   };
 

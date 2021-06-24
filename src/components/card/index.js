@@ -20,7 +20,13 @@ export const CardProduct = ({ product }) => {
 
   function addCart(product) {
     const filtered = carts.filter((cart) => cart.product.id === product.id);
-    editTotalprice({ status: "increment", price: +product.hargaSatuan });
+    editTotalprice({
+      status: "increment",
+      price:
+        product.discount
+          ? +product.hargaSatuan - (+product.hargaSatuan * (+product.discount / 100))
+          : +product.hargaSatuan
+    });
     if (filtered.length > 0) {
       filtered[0].qty += 1;
     } else {
@@ -41,11 +47,18 @@ export const CardProduct = ({ product }) => {
             {product.namaProduk}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            {product.deskripsi.split(' ').length > 10 ? `${product.deskripsi.split(' ').slice(0,10).join(' ')} ...` : product.deskripsi}
+            {product.deskripsi.split(' ').length > 10 ? `${product.deskripsi.split(' ').slice(0, 10).join(' ')} ...` : product.deskripsi}
           </Typography>
-          <Typography component="p">
-            Rp. {product.hargaSatuan.toLocaleString("id-ID")},-
-          </Typography>
+          {
+            product.discount
+              ? <Grid style={{ display: 'flex', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                <p style={{ margin: 0, marginRight: 5, color: 'gray', fontSize: 13, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rp. {(product.hargaSatuan).toLocaleString("id-ID")},-</p>
+                <b style={{ margin: 0 }}>Rp. {(Math.round(product.hargaSatuan - (product.hargaSatuan * (product.discount / 100)))).toLocaleString("id-ID")},-</b>
+              </Grid>
+              : <Typography component="p">
+                Rp. {product.hargaSatuan.toLocaleString("id-ID")},-
+                </Typography>
+          }
         </CardContent>
         <CardActions style={{ padding: '0.625rem' }} >
           {product.stock === 0 ? (
@@ -53,14 +66,14 @@ export const CardProduct = ({ product }) => {
               Stock habis
             </Typography>
           ) : (
-            <Button
-              fullWidth
-              className={classes.beli}
-              onClick={() => addCart(product)}
-            >
-              Beli
-            </Button>
-          )}
+              <Button
+                fullWidth
+                className={classes.beli}
+                onClick={() => addCart(product)}
+              >
+                Beli
+              </Button>
+            )}
         </CardActions>
       </Card>
     </Grid>

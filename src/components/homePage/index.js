@@ -117,7 +117,8 @@ const HomePage = () => {
         </div>
         {localStorage.getItem("access_token") &&
         userData?.totalPembelian >= premier &&
-        userData?.statusPremier === null ? (
+        (userData?.statusPremier === null ||
+        (userData?.statusPremier === "aktif" && !userData?.referralStatus))? (
           <div className={classes.share} style={{ verticalAlign: "middle" }}>
             <Typography style={{ fontSize: 12, fontWeight: "bold" }}>
               Dapatkan komisi tambahan
@@ -140,7 +141,7 @@ const HomePage = () => {
               Status: Menunggu Proses persetujuan premiere
             </Typography>
           </div>
-        ) : userData?.statusPremier === "aktif" ? (
+        ) : (userData?.statusPremier === "aktif" && userData?.referralStatus) ? (
           <div className={classes.share} style={{ verticalAlign: "middle" }}>
             <Typography style={{ fontSize: 12, fontWeight: "bold" }}>
               Bagikan link untuk komisi

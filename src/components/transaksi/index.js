@@ -69,6 +69,7 @@ const Transaksi = () => {
       fetchTransaksiAfterPayment();
     }
   }, []);
+
   return (
     <>
       <div className={classes.transaksiPage}>
@@ -103,11 +104,13 @@ const Transaksi = () => {
                       <LocalMallIcon />
                     </Grid>
                     <Grid item xs={10}>
-                      <Typography variant="subtitle2">
-                        <b>Belanja</b>
-                        <br />
-                        {item.createdAt.split("T")[0]}
-                      </Typography>
+                      <b>Belanja</b>
+                      {
+                        item.referralCode && <Grid style={{ backgroundColor: '#aaff7f', padding: 1, borderRadius: 3, width: 75, textAlign: 'center', marginTop: 3 }}>
+                          <p style={{ color: 'green', margin: 0, fontSize: 12 }}>{item.referralCode}</p>
+                        </Grid>
+                      }
+                      <p style={{ margin: 0, marginTop: 3, color: 'gray', fontSize: 13 }}>{item.createdAt.split("T")[0]}</p>
                     </Grid>
                   </Grid>
 
@@ -148,7 +151,7 @@ const Transaksi = () => {
                         Rp. {item.totalHarga}
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <Button
                         style={{
                           backgroundColor: "green",
@@ -176,13 +179,15 @@ const Transaksi = () => {
                         <LocalMallIcon />
                       </Grid>
                       <Grid item xs={4}>
-                        <Typography variant="subtitle2">
-                          <b>Belanja</b>
-                          <br />
-                          {item.createdAt.split("T")[0]}
-                        </Typography>
+                        <b>Belanja</b>
+                        {
+                          item.referralCode && <Grid style={{ backgroundColor: '#aaff7f', padding: 1, borderRadius: 3, width: 75, textAlign: 'center', marginTop: 3 }}>
+                            <p style={{ color: 'green', margin: 0, fontSize: 12 }}>{item.referralCode}</p>
+                          </Grid>
+                        }
+                        <p style={{ margin: 0, marginTop: 3, color: 'gray', fontSize: 13 }}>{item.createdAt.split("T")[0]}</p>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button
                           variant="contained"
                           disableElevation
@@ -230,7 +235,7 @@ const Transaksi = () => {
                         Rp. {item.totalHarga}
                         </Typography>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         {item.statusPengiriman === "dalam pengiriman" ? (
                           <Button
                             style={{

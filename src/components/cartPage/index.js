@@ -338,6 +338,7 @@ const CartPage = () => {
             nama={cart.product.namaProduk}
             weight={cart.product.weight}
             price={cart.product.hargaSatuan}
+            discount={cart.product.discount}
             qty={cart.qty}
             key={cart.product.id}
           />
