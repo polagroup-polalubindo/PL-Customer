@@ -47,9 +47,9 @@ export default function CenteredGrid() {
     setRefCode(null);
   };
 
-  useEffect(() => {
-    fetchKomisiData();
-    fetchUserData();
+  useEffect(async () => {
+    await fetchKomisiData();
+    await fetchUserData();
   }, []);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function CenteredGrid() {
       email: userData.email,
       phone: userData.phone,
       alamat: userData.alamat,
-      totalPembelian: 0
+      totalPembelian: userData.totalPembelian
     })
   }, [userData])
 
@@ -126,9 +126,9 @@ export default function CenteredGrid() {
                       onChange={handleChange} />
                   </Grid>
                   : <Grid xs={8}>
-                    <Grid style={{ fontWeight: "bold" }}>{userData.nama}</Grid>
-                    <Grid style={{ margin: "0.2rem 0", color: "gray" }}>{userData.email}</Grid>
-                    <Grid>{userData.phone}</Grid>
+                    <Grid style={{ fontWeight: "bold" }}>{userData && userData.nama}</Grid>
+                    <Grid style={{ margin: "0.2rem 0", color: "gray" }}>{userData && userData.email}</Grid>
+                    <Grid>{userData && userData.phone}</Grid>
                   </Grid>
               }
               <Grid xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>

@@ -36,6 +36,7 @@ const CartPage = () => {
     resetAddress,
     informasiPembeli,
     setInformasiPembeli,
+    fetchCarts,
   } = useContext(Context);
   const [check, setCheck] = useState(true);
   const [courierPicked, setCourierPicked] = useState("");
@@ -160,6 +161,8 @@ const CartPage = () => {
         });
       });
       localStorage.setItem("transaksi", JSON.stringify(data.transaksiData));
+      localStorage.setItem("carts", "[]")
+      fetchCarts()
       setCourierPicked("");
       setCheked(ongkosKirim);
       const response = await checkoutCart(data);

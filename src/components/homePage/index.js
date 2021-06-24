@@ -79,15 +79,15 @@ const HomePage = () => {
     copyToClipboard(`http://157.230.35.207/?ref=${refCode}`);
   };
 
-  useEffect(() => {
-    fetchBrands();
-    fetchProduct();
-    fetchCityListAPI();
-    fetchUserData();
+  useEffect(async () => {
     const queryParams = query.get("ref");
     if (queryParams !== null) {
       setRefCode(queryParams);
     }
+    fetchBrands();
+    fetchProduct();
+    fetchCityListAPI();
+    await fetchUserData();
   }, []);
 
   return (
