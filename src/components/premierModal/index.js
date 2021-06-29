@@ -8,13 +8,15 @@ import {
   Paper,
   FormHelperText,
   Fade,
-  Backdrop
+  Backdrop,
+  Select,
+  MenuItem
 } from "@material-ui/core";
 import { useStyles } from "./styles";
 import { Context } from "../../context/globalState";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
+import ModalSK from '../SKPremierModal';
 
-import logo from "./logo.png";
 import Swal from "sweetalert2";
 
 const PremierModal = ({ visible, handleClose }) => {
@@ -26,11 +28,19 @@ const PremierModal = ({ visible, handleClose }) => {
   const [input, setInput] = useState({
     noKtp: "",
     noNPWP: "",
+    namaRekening: "",
+    noRekening: "",
+    bank: ""
   });
   const [Error, setError] = useState({
     ktpError: false,
-    npwpError: false
+    npwpError: false,
+    namaRekeningError: false,
+    noRekeningError: false,
+    bankError: false
   })
+  const [OpenSKModal, setOpenSKModal] = useState(false)
+  const bankList = ['BNI', 'BCA']
 
   const handleChecked = () => {
     setChecked(!checked);
@@ -45,127 +55,176 @@ const PremierModal = ({ visible, handleClose }) => {
   };
 
   const handleSubmit = async () => {
-    if (!checked) {
-      setNotCheckedText("checklist menyetujui s&k untuk lanjut");
-    } else {
+    if (await validateForm()) {
       const response = await addKtpAndNPWP(input);
       if (response.message) {
         handleClose();
         setInput({ ...input, noKtp: "", noNPWP: "" });
       } else {
         let newError = {
-          ktpError: response.errors.find(el => el.message.match('KTP')) ? true : false,
-          npwpError: response.errors.find(el => el.message.match('NPWP')) ? true : false,
+          ktpErrorDuplicate: response.errors.find(el => el.message.match('KTP')) ? true : false,
+          npwpErrorDuplicate: response.errors.find(el => el.message.match('NPWP')) ? true : false,
         }
         setError(newError)
       }
     }
   };
 
+  const validateForm = () => {
+    let valid = true, error = {}
+
+    if (!input.noKtp || isNaN(input.noKtp) || input.noKtp.length !== 16 || +input.noKtp < 0) {
+      console.log(!input.noKtp)
+      console.log(isNaN(input.noKtp))
+      console.log(input.noKtp.length !== 16)
+      console.log(+input.noKtp < 0, +input.noKtp)
+      console.log("<>>>")
+      valid = false
+      error.ktpError = true
+    }
+    else error.ktpError = false
+
+    if (!input.noNPWP || isNaN(input.noNPWP) || input.noNPWP.length !== 15 || +input.noNPWP < 0) {
+      valid = false
+      error.npwpError = true
+    }
+    else error.npwpError = false
+
+    if (!input.namaRekening) {
+      valid = false
+      error.nameError = true
+    }
+    else error.nameError = false
+
+    if (!input.noRekening || isNaN(input.noRekening) || +input.noRekening < 0) {
+      valid = false
+      error.noRekeningError = true
+    }
+    else error.noRekeningError = false
+
+    if (!input.bank) {
+      valid = false
+      error.bankError = true
+    }
+    else error.bankError = false
+
+    if (!checked) setNotCheckedText("checklist menyetujui s&k untuk lanjut");
+
+    setError(error)
+
+    return valid
+  }
+
   return (
-    <Modal
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        border: 'none'
-      }}
-      open={visible}
-      onClose={handleClose}
-      closeAfterTransition
+    <>
+      <Modal
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: 'none'
+        }}
+        open={visible}
+        onClose={handleClose}
+        closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
         }}
-    >
-      <Fade in={visible} >
-        <Grid container className={classes.root}>
-          <Grid xs={12} style={{ margin: "-3rem 0" }}>
-            <img src={logo} width="280px" />
-          </Grid>
-          <Grid xs={12} style={{ textAlign: 'left' }}>
-            <ol>
-              <li>
-                Akun pelanggan dapat diupgrade menjadi premier dengan melakukan
-                minimum total transaksi sejumlah Rp.100.000,-
-            </li>
-              <li style={{ padding: "0.5rem 0" }}>
-                Pendaftaran untuk menjadi pelanggan premier akan otomatis muncul
-                di halaman utama setelah menyelesaikan minimum total transaksi.
-            </li>
-              <li>
-                Pelanggan diwajibkan untuk mengisi data diri dan nomor npwp pada
-                bagian pendaftaran.
-            </li>
-              <li style={{ padding: "0.5rem 0" }}>
-                Customer service kami akan menghubungi via Whatsapp untuk
-                melakukan verifikasi data diri.
-            </li>
-              <li>
-                Jika data sudah sesuai maka akun akan langsung menjadi pelanggan
-                premier dan dapat menggunakan kode referall.
-            </li>
-              <li style={{ padding: "0.5rem 0" }}>
-                Jika ditemukan adanya ketidaksesuaian data maka pihak customer
-                service akan melakukan konfirmasi ulang.
-            </li>
-              <li>
-                Pihak perusahaan berhak untuk menolak pengajuan premier apabila
-                data yang diberikan tidak sesuai dan atau tidak benar.
-            </li>
-            </ol>
-          </Grid>
-          <Grid xs={12}>
-            <b>Upgrade Premier</b>
-          </Grid>
-          <Grid xs={12} style={{ margin: "0.5rem 0" }}>
-            Dapatkan Komisi dengan bagi link
-        </Grid>
-          <Grid xs={12}>
-            <InputBase
-              name="noKtp"
-              type="number"
-              value={input.noKtp}
-              className={classes.input}
-              placeholder="KTP"
-              onChange={handleChange}
-              style={{ border: Error.ktpError ? "1px solid red" : "1px solid black" }}
-            />
-            {
-              Error.ktpError && <FormHelperText style={{ color: "red", textAlign: 'center' }}>No KTP sudah digunakan</FormHelperText>
-            }
-          </Grid>
-          <Grid xs={12} style={{ margin: "0.5rem 0" }}>
-            <InputBase
-              name="noNPWP"
-              type="number"
-              value={input.noNPWP}
-              className={classes.input}
-              placeholder="NPWP"
-              onChange={handleChange}
-              style={{ border: Error.npwpError ? "1px solid red" : "1px solid black" }}
-            />
-            {
-              Error.npwpError && <FormHelperText style={{ color: "red", textAlign: 'center' }}>No NPWP sudah digunakan</FormHelperText>
-            }
-          </Grid>
-          <Grid xs={12}>
-            <span style={{ color: checked ? "black" : "red" }}>
-              <Checkbox checked={checked} onChange={handleChecked} /> Menyetujui
-            S&K
-          </span>
-            <br />
-            <span>{notChecedText.length > 0 ? notChecedText : ""}</span>
-          </Grid>
+      >
+        <Fade in={visible} >
+          <Grid container className={classes.root}>
+            <Grid xs={12}>
+              <b style={{ fontSize: 20 }}>Upgrade Premier</b>
+            </Grid>
+            <Grid xs={12} style={{ margin: "0.5rem 0" }}>
+              Dapatkan Komisi dengan bagi link
+            </Grid>
 
-          <Grid xs={12}>
-            <Button className={classes.button} onClick={handleSubmit}>
-              Simpan
-          </Button>
+            <Grid xs={12} style={{ margin: "0.5rem 0" }}>
+              <InputBase
+                name="noKtp"
+                type="number"
+                value={input.noKtp}
+                className={classes.input}
+                placeholder="KTP"
+                onChange={handleChange}
+                style={{ border: Error.ktpError ? "1px solid red" : "1px solid black" }}
+              />
+              {
+                Error.ktpErrorDuplicate && <FormHelperText style={{ color: "red", textAlign: 'center' }}>No KTP sudah digunakan</FormHelperText>
+              }
+            </Grid>
+            <Grid xs={12} style={{ margin: "0.5rem 0" }}>
+              <InputBase
+                name="noNPWP"
+                type="number"
+                value={input.noNPWP}
+                className={classes.input}
+                placeholder="NPWP"
+                onChange={handleChange}
+                style={{ border: Error.npwpError ? "1px solid red" : "1px solid black" }}
+              />
+              {
+                Error.npwpErrorDuplicate && <FormHelperText style={{ color: "red", textAlign: 'center' }}>No NPWP sudah digunakan</FormHelperText>
+              }
+            </Grid>
+            <Grid xs={12} style={{ margin: "0.5rem 0" }}>
+              <InputBase
+                name="namaRekening"
+                value={input.namaRekening}
+                className={classes.input}
+                placeholder="Nama di Rekening"
+                onChange={handleChange}
+                style={{ border: Error.nameError ? "1px solid red" : "1px solid black" }}
+              />
+            </Grid>
+            <Grid xs={12} style={{ margin: "0.5rem 0" }}>
+              <InputBase
+                name="noRekening"
+                type="Number"
+                value={input.noRekening}
+                className={classes.input}
+                placeholder="Nomor Rekening"
+                onChange={handleChange}
+                style={{ border: Error.noRekeningError ? "1px solid red" : "1px solid black" }}
+              />
+            </Grid>
+            <Grid xs={12} style={{ margin: "0.5rem 0" }}>
+              <Select
+                name="bank"
+                value={input.bank}
+                className={classes.input}
+                placeholder="Bank"
+                onChange={handleChange}
+                style={{ border: Error.bankError ? "1px solid red" : "1px solid black", width:215 }}
+              >
+              <MenuItem value="BNI">BNI</MenuItem>
+              <MenuItem value="BCA">BCA</MenuItem>
+              </Select>
+            </Grid>
+
+            <Grid xs={12}>
+              <span style={{ color: checked ? "black" : "red", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Checkbox checked={checked} onChange={handleChecked} style={{ margin: 0 }} /> saya menyetujui <u style={{ margin: 0, marginLeft: 3, cursor: 'pointer' }} onClick={() => setOpenSKModal(!OpenSKModal)}>S&K</u>
+              </span>
+              <span>{notChecedText.length > 0 ? notChecedText : ""}</span>
+            </Grid>
+
+            <Grid xs={12}>
+              <Button className={classes.button} onClick={handleSubmit}>
+                Simpan
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Fade>
-    </Modal>
+        </Fade>
+      </Modal>
+
+      <ModalSK
+        visible={OpenSKModal}
+        handleClose={() => setOpenSKModal(!OpenSKModal)}
+      />
+    </>
   );
 };
 

@@ -17,11 +17,11 @@ export const useStyles = makeStyles({
     alignItems: "center",
     bottom:55,
     position:"fixed",
-    maxWidth: "500px",
+    maxWidth: "468px",
     padding: "0.5rem 1rem"
   },
   btn: {
-    backgroundColor: "red",
+    backgroundColor: "green",
     color: "#fff",
     padding: "0 1rem",
   },

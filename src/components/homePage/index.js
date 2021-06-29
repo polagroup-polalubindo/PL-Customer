@@ -117,7 +117,7 @@ const HomePage = () => {
         </div>
         {localStorage.getItem("access_token") &&
         userData?.totalPembelian >= premier &&
-        (userData?.statusPremier === null ||
+        (!userData?.statusPremier ||
         (userData?.statusPremier === "aktif" && !userData?.referralStatus))? (
           <div className={classes.share} style={{ verticalAlign: "middle" }}>
             <Typography style={{ fontSize: 12, fontWeight: "bold" }}>

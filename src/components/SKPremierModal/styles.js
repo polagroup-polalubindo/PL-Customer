@@ -2,12 +2,12 @@ import { makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles({
   root: {
-    width: 400,
+    width: 800,
     maxWidth: "90%",
     textAlign: "center",
     display: "flex",
     alignItems: "center",
-    maxHeight: "90%",
+    maxHeight: "80%",
     overflowX: "auto",
     backgroundColor: "#fff",
     padding: "1rem",
@@ -25,11 +25,5 @@ export const useStyles = makeStyles({
     // border: "1px solid black",
     borderRadius: "2px",
     padding: "0.2rem 0.5rem",
-  },
-  button: {
-    background: "green",
-    color: "#fff",
-    borderRadius: "3px",
-    marginTop: 10
   },
 });

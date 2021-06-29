@@ -127,10 +127,15 @@ const CartPage = () => {
         )
       );
 
+      let month = new Date().getMonth() + 1 < 10 ? `0${new Date().getMonth() + 1}` : new Date().getMonth() + 1
+      let date = new Date().getDate() < 10 ? `0${new Date().getDate()}` : new Date().getDate()
+      let minute = new Date().getMinutes() < 10 ? `0${new Date().getMinutes()}` : new Date().getMinutes()
+      let second = new Date().getSeconds() < 10 ? `0${new Date().getSeconds()}` : new Date().getSeconds()
+
       let data = {
         userData: informasiPembeli,
         transaksiData: {
-          invoice: `INV/${new Date().getFullYear()}${new Date().getMonth()}${new Date().getDate()}/${new Date().getMinutes()}${new Date().getSeconds()}`,
+          invoice: `INV/${new Date().getFullYear()}${month}${date}/${minute}${second}`,
           totalHarga: totalPrice + ongkosKirim,
           ongkosKirim: ongkosKirim,
           kurir: courierPicked,
