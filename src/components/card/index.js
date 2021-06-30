@@ -10,6 +10,8 @@ import {
   Button,
   Grid,
 } from "@material-ui/core";
+
+import komisiLogo from "../../assets/komisi.png";
 import AddCircleSharpIcon from "@material-ui/icons/AddCircleSharp";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 
@@ -22,10 +24,10 @@ export const CardProduct = ({ product }) => {
     const filtered = carts.filter((cart) => cart.product.id === product.id);
     editTotalprice({
       status: "increment",
-      price:
-        product.discount
-          ? +product.hargaSatuan - (+product.hargaSatuan * (+product.discount / 100))
-          : +product.hargaSatuan
+      price: product.discount
+        ? +product.hargaSatuan -
+          +product.hargaSatuan * (+product.discount / 100)
+        : +product.hargaSatuan,
     });
     if (filtered.length > 0) {
       filtered[0].qty += 1;
@@ -41,39 +43,83 @@ export const CardProduct = ({ product }) => {
           className={classes.media}
           image={product.fotoProduk}
           title={product.namaProduk}
-        />
-        <CardContent style={{ padding: '0.3125rem 0.625rem 0rem' }}>
+        >
+          <img
+            src={komisiLogo}
+            alt="logo komisi"
+            width="50"
+            height="50"
+            style={{ position: "absolute", top: 0, right: 0 }}
+          />
+          <Typography
+            variant="subtitle2"
+            style={{
+              position: "absolute",
+              top: 16,
+              right: 17,
+            }}
+          >
+            {product.komisi}
+          </Typography>
+        </CardMedia>
+        <CardContent style={{ padding: "0.3125rem 0.625rem 0rem" }}>
           <Typography className={classes.produkTitle}>
             {product.namaProduk}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            {product.deskripsi.split(' ').length > 10 ? `${product.deskripsi.split(' ').slice(0, 10).join(' ')} ...` : product.deskripsi}
+            {product.deskripsi.split(" ").length > 10
+              ? `${product.deskripsi.split(" ").slice(0, 10).join(" ")} ...`
+              : product.deskripsi}
           </Typography>
-          {
-            product.discount
-              ? <Grid style={{ display: 'flex', alignItems: 'flex-end', flexWrap: 'wrap' }}>
-                <p style={{ margin: 0, marginRight: 5, color: 'gray', fontSize: 13, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rp. {(product.hargaSatuan).toLocaleString("id-ID")},-</p>
-                <b style={{ margin: 0 }}>Rp. {(Math.round(product.hargaSatuan - (product.hargaSatuan * (product.discount / 100)))).toLocaleString("id-ID")},-</b>
-              </Grid>
-              : <Typography component="p">
+          {product.discount ? (
+            <Grid
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                flexWrap: "wrap",
+              }}
+            >
+              <p
+                style={{
+                  margin: 0,
+                  marginRight: 5,
+                  color: "gray",
+                  fontSize: 13,
+                  textDecorationLine: "line-through",
+                  textDecorationStyle: "solid",
+                }}
+              >
                 Rp. {product.hargaSatuan.toLocaleString("id-ID")},-
-                </Typography>
-          }
+              </p>
+              <b style={{ margin: 0 }}>
+                Rp.{" "}
+                {Math.round(
+                  product.hargaSatuan -
+                    product.hargaSatuan * (product.discount / 100)
+                ).toLocaleString("id-ID")}
+                ,-
+              </b>
+            </Grid>
+          ) : (
+            <Typography component="p">
+              Rp. {product.hargaSatuan.toLocaleString("id-ID")},-
+            </Typography>
+          )}
         </CardContent>
-        <CardActions style={{ padding: '0.625rem' }} >
+        <CardActions style={{ padding: "0.625rem" }}>
           {product.stock === 0 ? (
             <Typography variant="body2" color="textSecondary" component="p">
               Stock habis
             </Typography>
           ) : (
-              <Button
-                fullWidth
-                className={classes.beli}
-                onClick={() => addCart(product)}
-              >
-                Beli
-              </Button>
-            )}
+            <Button
+              fullWidth
+              className={classes.beli}
+              onClick={() => addCart(product)}
+            >
+              Beli
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Grid>
