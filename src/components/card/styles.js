@@ -18,4 +18,14 @@ export const useStyles = makeStyles({
     fontWeight: "bold",
     fontSize: "0.7rem",
   },
+  jml_komisi: {
+    position: "absolute",
+    top: 16,
+    right: 17,
+  },
+  logo_komisi: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+  },
 });

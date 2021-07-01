@@ -49,16 +49,9 @@ export const CardProduct = ({ product }) => {
             alt="logo komisi"
             width="50"
             height="50"
-            style={{ position: "absolute", top: 0, right: 0 }}
+            className={classes.logo_komisi}
           />
-          <Typography
-            variant="subtitle2"
-            style={{
-              position: "absolute",
-              top: 16,
-              right: 17,
-            }}
-          >
+          <Typography variant="subtitle2" className={classes.jml_komisi}>
             {product.komisi}
           </Typography>
         </CardMedia>
