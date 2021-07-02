@@ -30,8 +30,8 @@ const KonfirmasiPembayaran = () => {
   const [bankAsal, setBankAsal] = useState("Bank Asal");
   const [bankTujuan, setBankTujuan] = useState("Bank Tujuan");
   const transaksiData = JSON.parse(localStorage.getItem("transaksi"));
-  const minDate = transaksiData ? transaksiData.createdAt.slice(0,10) : null;
-  const maxDate = transaksiData ? transaksiData.expiredAt.slice(0,10) : null;
+  const minDate = transaksiData ? transaksiData.createdAt.slice(0, 10) : null;
+  const maxDate = transaksiData ? transaksiData.expiredAt.slice(0, 10) : null;
 
   const back = () => {
     history.push(refCode ? `/pembayaran?ref=${refCode}` : "/pembayaran");
@@ -80,11 +80,14 @@ const KonfirmasiPembayaran = () => {
 
   const handleKonfirm = async () => {
     const yearNow = new Date().getFullYear();
-    let monthNow = new Date().getMonth();
+    let monthNow = new Date().getMonth() + 1;
     if (monthNow < 10) {
-      monthNow = `0${monthNow + 1}`;
+      monthNow = `0${monthNow}`;
     }
-    const dateNow = new Date().getDate();
+    let dateNow = new Date().getDate();
+    if (dateNow < 10) {
+      dateNow = `0${dateNow}`;
+    }
 
     if (
       tanggal === "" ||
