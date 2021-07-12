@@ -77,7 +77,6 @@ export default (state, action) => {
         courier: action.payload,
       };
     case "SET_ONGKIR":
-      console.log(action.payload, "payload");
       return {
         ...state,
         ongkosKirim: action.payload,

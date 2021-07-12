@@ -37,6 +37,8 @@ const CartPage = () => {
     informasiPembeli,
     setInformasiPembeli,
     fetchCarts,
+    userData,
+    editProfil,
   } = useContext(Context);
   const [check, setCheck] = useState(true);
   const [courierPicked, setCourierPicked] = useState("");
@@ -172,6 +174,8 @@ const CartPage = () => {
       setCheked(ongkosKirim);
       const response = await checkoutCart(data);
       if (response.message === "Success") {
+        await editProfil(userData.id, { nama: informasiPembeli.nama, email: informasiPembeli.email, phone: informasiPembeli.phone })
+
         history.push(!refCode ? "/pembayaran" : `/pembayaran?ref=${refCode}`);
         setInformasiPembeli({ nama: "", email: "", phone: "" });
       } else if (response.message === "go to login page") {
@@ -186,6 +190,33 @@ const CartPage = () => {
     fetchProduct();
   }, []);
 
+  useEffect(() => {
+    if (userData) {
+      if (userData.alamat && !address.kabupaten) {
+        let jalan, detail, kecamatan, kabupaten
+        let alamatSplit = userData.alamat.split(',')
+
+        kabupaten = alamatSplit[alamatSplit.length - 1]
+        kecamatan = alamatSplit[alamatSplit.length - 2]
+
+        let checkDetail = alamatSplit[alamatSplit.length - 3]
+
+        if (checkDetail.split('[').length > 1) {
+          let temp = checkDetail.split('[')
+
+          jalan = alamatSplit.slice(0, alamatSplit.length - 2).join(',').split('[')[0]
+          detail = temp[temp.length - 1].slice(0, temp[temp.length - 1].length - 1)
+        } else {
+          jalan = alamatSplit.slice(0, alamatSplit.length - 2).join(',')
+        }
+        addAddress({ kabupaten, kecamatan, jalan, detail });
+      }
+
+      setInformasiPembeli({ nama: userData.nama || '', email: userData.email || '', phone: userData.phone || '' })
+
+    }
+  }, [userData, address])
+
   return (
     <>
       <Paper className={classes.nav}>
@@ -199,7 +230,10 @@ const CartPage = () => {
         </div>
       </Paper>
       <Paper className={classes.box1} elevation={3}>
-        <Typography className={classes.boxText}>Informasi Pembeli</Typography>
+        <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+          <Typography className={classes.boxText}>Informasi Pembeli</Typography>
+          <Typography style={{ fontSize: 10, color: 'gray', marginTop: 1, marginLeft: 5, width: '60%' }}>(Jika data tidak sesuai harap diupdate di menu profil)</Typography>
+        </div>
         <div className={classes.formBox}>
           <Typography className={classes.formText}>Nama Lengkap</Typography>
           <InputBase
@@ -207,6 +241,7 @@ const CartPage = () => {
             name="nama"
             value={informasiPembeli.nama}
             onChange={handleInput}
+            disabled
           />
         </div>
         <div className={classes.formBox}>
@@ -216,6 +251,7 @@ const CartPage = () => {
             name="email"
             value={informasiPembeli.email}
             onChange={handleInput}
+            disabled
           />
         </div>
         <div className={classes.formBox}>
@@ -228,6 +264,7 @@ const CartPage = () => {
             name="phone"
             value={informasiPembeli.phone}
             onChange={handleInput}
+            disabled
           />
         </div>
         {address.kabupaten ? (
@@ -284,6 +321,7 @@ const CartPage = () => {
           className={classes.select}
           value={courierPicked}
           onChange={selected}
+          disabled={!address.kabupaten}
         >
           <option className={classes.option}>Pilih Kurir</option>
           <option className={classes.option}>tiki</option>
@@ -291,14 +329,16 @@ const CartPage = () => {
         </select>
         <Grid container alignItems="center">
           {services === null && courierPicked !== "" && (
-            <CircularProgress
-              style={{ marginLeft: "40%", marginTop: "1rem" }}
-            />
+            <Grid alignItems="center" style={{ textAlign: 'center', width: '100%' }}>
+              <CircularProgress
+                style={{ marginTop: "1rem" }}
+              />
+            </Grid>
           )}
           {services &&
             services.map((service) => (
               <>
-                <Grid item xs={9} key={service.service}>
+                <Grid item xs={8} key={service.service}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -310,14 +350,14 @@ const CartPage = () => {
                       />
                     }
                     label={
-                      <>
+                      <Grid style={{ fontSize: 14}}>
                         {service.service} | {service.cost[0].etd} Day
-                      </>
+                      </Grid>
                     }
                   />
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={4} style={{ fontSize: 14, textAlign: 'right' }}>
                   Rp. {service.cost[0].value}
                 </Grid>
               </>
@@ -352,15 +392,16 @@ const CartPage = () => {
           style={{
             borderTop: "2px solid grey",
             margin: "0.3rem",
+            marginTop: "0.5rem",
             display: "flex",
             justifyContent: "space-between",
             padding: "0.4rem",
           }}
         >
-          <Typography style={{ fontSize: 10, fontWeight: "bold" }}>
+          <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
             Total Belanja
           </Typography>
-          <Typography style={{ fontSize: 10, fontWeight: "bold" }}>
+          <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
             Rp {new Number(totalPrice).toLocaleString("id-ID")}
           </Typography>
         </div>

@@ -38,14 +38,15 @@ const HomePage = () => {
 
   const handleCopy = async () => {
     const refCode = await getRefcode();
-    console.log(refCode);
+
     function copyToClipboard(textToCopy) {
       // navigator clipboard api needs a secure context (https)
       if (navigator.clipboard && window.isSecureContext) {
         // navigator clipboard api method'
         Swal.fire({
           title: "Link Copied",
-          text: `http://157.230.35.207/?ref=${refCode}`,
+          // text: `http://157.230.35.207/?ref=${refCode}`,
+          text: `http://store.polalubindo.co.id/?ref=${refCode}`,
           icon: "success",
           timer: 1000,
           showConfirmButton: false,
@@ -64,7 +65,8 @@ const HomePage = () => {
         textArea.select();
         Swal.fire({
           title: "Link Copied",
-          text: `http://157.230.35.207/?ref=${refCode}`,
+          // text: `http://157.230.35.207/?ref=${refCode}`,
+          text: `http://store.polalubindo.co.id/?ref=${refCode}`,
           icon: "success",
           timer: 1000,
           showConfirmButton: false,
@@ -76,7 +78,8 @@ const HomePage = () => {
         });
       }
     }
-    copyToClipboard(`http://157.230.35.207/?ref=${refCode}`);
+    // copyToClipboard(`http://157.230.35.207/?ref=${refCode}`);
+    copyToClipboard(`http://store.polalubindo.co.id/?ref=${refCode}`);
   };
 
   useEffect(async () => {

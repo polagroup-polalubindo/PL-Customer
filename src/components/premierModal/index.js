@@ -74,11 +74,6 @@ const PremierModal = ({ visible, handleClose }) => {
     let valid = true, error = {}
 
     if (!input.noKtp || isNaN(input.noKtp) || input.noKtp.length !== 16 || +input.noKtp < 0) {
-      console.log(!input.noKtp)
-      console.log(isNaN(input.noKtp))
-      console.log(input.noKtp.length !== 16)
-      console.log(+input.noKtp < 0, +input.noKtp)
-      console.log("<>>>")
       valid = false
       error.ktpError = true
     }

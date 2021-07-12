@@ -38,6 +38,7 @@ export default function CenteredGrid() {
   const back = () => {
     history.push(refCode ? `/?ref=${refCode}` : "/");
   };
+
   const handleLogout = () => {
     history.push("/login");
     localStorage.removeItem("access_token");

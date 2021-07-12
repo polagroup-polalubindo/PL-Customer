@@ -24,7 +24,7 @@ export const CardProduct = ({ product }) => {
       status: "increment",
       price:
         product.discount
-          ? +product.hargaSatuan - (+product.hargaSatuan * (+product.discount / 100))
+          ? Math.round(+product.hargaSatuan - Math.round((+product.hargaSatuan * (+product.discount / 100))))
           : +product.hargaSatuan
     });
     if (filtered.length > 0) {
@@ -53,7 +53,7 @@ export const CardProduct = ({ product }) => {
             product.discount
               ? <Grid style={{ display: 'flex', alignItems: 'flex-end', flexWrap: 'wrap' }}>
                 <p style={{ margin: 0, marginRight: 5, color: 'gray', fontSize: 13, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rp. {(product.hargaSatuan).toLocaleString("id-ID")},-</p>
-                <b style={{ margin: 0 }}>Rp. {(Math.round(product.hargaSatuan - (product.hargaSatuan * (product.discount / 100)))).toLocaleString("id-ID")},-</b>
+                <b style={{ margin: 0 }}>Rp. {(Math.round(product.hargaSatuan - Math.round((product.hargaSatuan * (product.discount / 100))))).toLocaleString("id-ID")},-</b>
               </Grid>
               : <Typography component="p">
                 Rp. {product.hargaSatuan.toLocaleString("id-ID")},-

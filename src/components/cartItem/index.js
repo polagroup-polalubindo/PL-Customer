@@ -24,27 +24,27 @@ const CartItem = ({ nama, weight, price, qty, id, discount }) => {
   const addOne = () => {
     filtered[0].qty += 1;
     editCart(filtered[0]);
-    editTotalprice({ status: "increment", price: discount ? Math.round(price - (price * (discount / 100))) : price });
+    editTotalprice({ status: "increment", price: discount ? Math.round(price - Math.round((price * (discount / 100)))) : price });
   };
 
   const minusOne = () => {
     filtered[0].qty -= 1;
     if (filtered[0].qty === 0) {
       deleteCart(filtered[0].product.id);
-      editTotalprice({ status: "decrement", price: discount ? Math.round(price - (price * (discount / 100))) : price });
+      editTotalprice({ status: "decrement", price: discount ? Math.round(price - Math.round((price * (discount / 100)))) : price });
     } else {
       editCart(filtered[0]);
-      editTotalprice({ status: "decrement", price: discount ? Math.round(price - (price * (discount / 100))) : price });
+      editTotalprice({ status: "decrement", price: discount ? Math.round(price - Math.round((price * (discount / 100)))) : price });
     }
   };
-  Math.round(price - (price * (discount / 100)))
+
   const handleCheck = () => {
     filtered[0].checked = !filtered[0].checked;
     checkedItem(filtered[0]);
     if (!filtered[0].checked) {
-      editTotalprice({ status: "decrement", price: (discount ? Math.round(price - (price * (discount / 100))) : price) * qty });
+      editTotalprice({ status: "decrement", price: (discount ? Math.round(price - Math.round((price * (discount / 100)))) : price) * qty });
     } else {
-      editTotalprice({ status: "increment", price: (discount ? Math.round(price - (price * (discount / 100))) : price) * qty });
+      editTotalprice({ status: "increment", price: (discount ? Math.round(price - Math.round((price * (discount / 100)))) : price) * qty });
     }
   };
 
@@ -70,7 +70,7 @@ const CartItem = ({ nama, weight, price, qty, id, discount }) => {
             discount
               ? <Grid style={{ display: 'flex', alignItems: 'flex-end', flexWrap: 'wrap' }}>
                 <p style={{ margin: 0, marginRight: 5, color: 'gray', fontSize: 8, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rp. {(price).toLocaleString("id-ID")},-</p>
-                <b style={{ margin: 0, fontSize: 10 }}>Rp. {(Math.round(price - (price * (discount / 100)))).toLocaleString("id-ID")},-</b>
+                <b style={{ margin: 0, fontSize: 10 }}>Rp. {(Math.round(price - Math.round((price * (discount / 100))))).toLocaleString("id-ID")},-</b>
               </Grid>
               : <Typography style={{ fontSize: 10, fontWeight: "bold" }}>
                 Rp {new Number(price).toLocaleString("id-ID")}

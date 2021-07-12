@@ -37,7 +37,7 @@ const initialState = {
 export const Context = createContext(initialState);
 export const ContextProvider = (props) => {
   const [state, dispatch] = useReducer(appReducers, initialState);
-  console.log(state, "global state");
+  // console.log(state, "global state");
 
   useEffect(() => {
     localStorage.setItem("carts", JSON.stringify(state.carts));
@@ -177,7 +177,6 @@ export const ContextProvider = (props) => {
         return { message: "Success" };
       }
     } catch (error) {
-      console.log(error);
       if (
         error.errMessage === "email address already in use" ||
         error.errMessage === "phone number already in use"
@@ -218,7 +217,6 @@ export const ContextProvider = (props) => {
         return { message: "Success" };
       }
     } catch (error) {
-      console.log(error);
       return { message: "Failed" };
     }
   };
@@ -340,7 +338,7 @@ export const ContextProvider = (props) => {
 
   const editProfil = async (id, newData) => {
     const access_token = localStorage.getItem("access_token");
-    let data = await fetch(baseUrl + `/customer/${id}`, {
+    await fetch(baseUrl + `/customer/${id}`, {
       method: "PUT",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),

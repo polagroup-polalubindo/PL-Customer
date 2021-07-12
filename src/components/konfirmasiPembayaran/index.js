@@ -100,7 +100,6 @@ const KonfirmasiPembayaran = () => {
         icon: "error",
       });
     } else if (`${yearNow}-${monthNow}-${dateNow}` > tanggal) {
-      console.log("masuk");
       Swal.fire({
         title: "tanggal pembayaran tidak sesuai",
         icon: "error",
