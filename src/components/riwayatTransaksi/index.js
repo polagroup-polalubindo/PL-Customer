@@ -46,7 +46,7 @@ export default function CenteredGrid() {
                     {transaksi.createdAt.split("T")[1].split(".")[0]}
                     <p style={{ color: "red", fontSize: "20px" }}>
                       - Rp.{" "}
-                      {new Number(transaksi.nominal).toLocaleString("id-ID")}
+                      {Number(transaksi.nominal).toLocaleString("id-ID")}
                     </p>
                     {transaksi?.User.bank} - {transaksi?.User.noRekening}
                     <hr />

@@ -9,6 +9,7 @@ import komisiLogo from "./asset/komisi.png";
 import { useContext } from "react";
 import { Context } from "../../context/globalState";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import ModalKomisi from "./ModalKomisi";
 
 export default function CenteredGrid() {
   const classes = useStyles();
@@ -33,7 +34,7 @@ export default function CenteredGrid() {
     alamat: '',
     totalPembelian: 0
   })
-
+  const [OpenModalKomisi, setOpenModalKomisi] = useState(false)
 
   const back = () => {
     history.push(refCode ? `/?ref=${refCode}` : "/");
@@ -165,7 +166,7 @@ export default function CenteredGrid() {
                 </Grid>
                 <Grid item xs={6}>
                   Total Pembelian
-                    </Grid>
+                </Grid>
                 {komisi && (
                   <Grid item xs={4}>
                     Rp.{" "}
@@ -192,13 +193,14 @@ export default function CenteredGrid() {
                   <img src={komisiLogo} alt="Komisi" />
                 </Grid>
                 <Grid item xs={6}>
-                  Total Komisi
+                  Total Komisi Bulan Ini
+                  <p style={{ margin: 0, cursor: 'pointer', fontSize: 13, color: 'blue' }} onClick={() => setOpenModalKomisi(true)}>lihat selengkapnya</p>
                 </Grid>
-                {komisi && (
-                  <Grid item xs={4}>
-                    Rp. {new Number(komisi.sisaKomisi).toLocaleString("id-ID")}
-                  </Grid>
-                )}
+                <Grid item xs={4}>
+                  {komisi && komisi.length > 0 && (
+                    <p style={{ margin: 0 }}> Rp. {new Number(komisi[0].totalKomisi).toLocaleString("id-ID")}</p>
+                  )}
+                </Grid>
               </Grid>
 
               {/* <Button
@@ -239,6 +241,10 @@ export default function CenteredGrid() {
           </Button>
         </div>
       </div>
+
+      {
+        OpenModalKomisi && <ModalKomisi open={OpenModalKomisi} close={() => setOpenModalKomisi(false)} />
+      }
     </>
   );
 }
