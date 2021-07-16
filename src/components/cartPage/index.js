@@ -129,15 +129,9 @@ const CartPage = () => {
         )
       );
 
-      let month = new Date().getMonth() + 1 < 10 ? `0${new Date().getMonth() + 1}` : new Date().getMonth() + 1
-      let date = new Date().getDate() < 10 ? `0${new Date().getDate()}` : new Date().getDate()
-      let minute = new Date().getMinutes() < 10 ? `0${new Date().getMinutes()}` : new Date().getMinutes()
-      let second = new Date().getSeconds() < 10 ? `0${new Date().getSeconds()}` : new Date().getSeconds()
-
       let data = {
         userData: informasiPembeli,
         transaksiData: {
-          invoice: `INV/${new Date().getFullYear()}${month}${date}/${minute}${second}`,
           totalHarga: totalPrice + ongkosKirim,
           ongkosKirim: ongkosKirim,
           kurir: courierPicked,
@@ -174,8 +168,6 @@ const CartPage = () => {
       setCheked(ongkosKirim);
       const response = await checkoutCart(data);
       if (response.message === "Success") {
-        await editProfil(userData.id, { nama: informasiPembeli.nama, email: informasiPembeli.email, phone: informasiPembeli.phone })
-
         history.push(!refCode ? "/pembayaran" : `/pembayaran?ref=${refCode}`);
         setInformasiPembeli({ nama: "", email: "", phone: "" });
       } else if (response.message === "go to login page") {

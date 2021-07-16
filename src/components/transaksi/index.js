@@ -36,7 +36,6 @@ const Transaksi = () => {
 
   const handleKonfirmasi = async (data) => {
     let transaksiData = {
-      invoice: "INV/300421/01",
       totalHarga: data.totalHarga,
       ongkosKirim: data.ongkosKirim,
       namaPenerima: data.namaPenerima,
