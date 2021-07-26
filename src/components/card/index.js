@@ -10,6 +10,7 @@ import {
   Button,
   Grid,
 } from "@material-ui/core";
+import komisiLogo from "../../assets/komisi.png";
 import AddCircleSharpIcon from "@material-ui/icons/AddCircleSharp";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 
@@ -41,7 +42,23 @@ export const CardProduct = ({ product }) => {
           className={classes.media}
           image={product.fotoProduk}
           title={product.namaProduk}
-        />
+        >
+          {product.komisiStatus === true &&
+            userData?.statusPremier === "aktif" ? (
+            <>
+              <img
+                src={komisiLogo}
+                alt="logo komisi"
+                width="50"
+                height="50"
+                className={classes.logo_komisi}
+              />
+              <Typography variant="subtitle2" className={classes.jml_komisi}>
+                {product.komisiLevel1}
+              </Typography>
+            </>
+          ) : null}
+        </CardMedia>
         <CardContent style={{ padding: '0.3125rem 0.625rem 0rem' }}>
           <Typography className={classes.produkTitle}>
             {product.namaProduk}
@@ -57,7 +74,7 @@ export const CardProduct = ({ product }) => {
               </Grid>
               : <Typography component="p">
                 Rp. {product.hargaSatuan.toLocaleString("id-ID")},-
-                </Typography>
+              </Typography>
           }
         </CardContent>
         <CardActions style={{ padding: '0.625rem' }} >
@@ -66,14 +83,14 @@ export const CardProduct = ({ product }) => {
               Stock habis
             </Typography>
           ) : (
-              <Button
-                fullWidth
-                className={classes.beli}
-                onClick={() => addCart(product)}
-              >
-                Beli
-              </Button>
-            )}
+            <Button
+              fullWidth
+              className={classes.beli}
+              onClick={() => addCart(product)}
+            >
+              Beli
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Grid>
