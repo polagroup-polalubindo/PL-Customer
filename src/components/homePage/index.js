@@ -25,7 +25,6 @@ const HomePage = () => {
   const {
     fetchBrands,
     fetchProduct,
-    fetchCityListAPI,
     fetchUserData,
     brands,
     products,
@@ -89,7 +88,6 @@ const HomePage = () => {
     }
     fetchBrands();
     fetchProduct();
-    fetchCityListAPI();
     await fetchUserData();
   }, []);
 

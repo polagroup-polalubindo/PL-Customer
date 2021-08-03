@@ -12,7 +12,7 @@ const Pembayaran = () => {
   const history = useHistory();
   const { totalPrice, ongkosKirim, refCode, resetLocal } = useContext(Context);
   let dataTransaksi = JSON.parse(localStorage.getItem("transaksi"));
-
+console.log(dataTransaksi)
   const handleBackToHome = () => {
     history.push(refCode ? `/?ref=${refCode}` : "/");
     localStorage.removeItem("transaksi");
@@ -45,7 +45,7 @@ const Pembayaran = () => {
           <Typography
             style={{ fontWeight: "bold", fontSize: "2rem", color: "#ff6701" }}
           >
-            Rp.{totalPrice + ongkosKirim}
+            Rp. {new Number(totalPrice + ongkosKirim + dataTransaksi.insuranceFee).toLocaleString("id-ID")}
           </Typography>
           <Typography>Bayar Sebelum</Typography>
           <Typography>{dataTransaksi.expiredAt.split("T")[0]} - {dataTransaksi.expiredAt.split("T")[1].split(".")[0]}</Typography>

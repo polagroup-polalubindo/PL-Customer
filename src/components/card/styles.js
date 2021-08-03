@@ -4,6 +4,7 @@ export const useStyles = makeStyles({
   media: {
     height: 0,
     paddingTop: "56.25%", // 16:9
+    position:'relative'
   },
   produkTitle: {
     fontWeight: "bold",
@@ -20,11 +21,13 @@ export const useStyles = makeStyles({
   jml_komisi: {
     position: "absolute",
     top: 16,
-    right: 17,
+    right: 12,
+    width: 20,
+    textAlign:'center'
   },
   logo_komisi: {
     position: "absolute",
     top: 0,
-    right: 0,
+    right: -3,
   },
 });

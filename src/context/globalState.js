@@ -5,11 +5,8 @@ import appReducers from "./appReducers";
 import Axios from "axios";
 
 const baseUrl = "http://157.230.248.17";
-// const baseUrl = 'http://localhost:80';
 // const baseUrl = 'http://localhost:4000';
-const instance = Axios.create({
-  baseURL: baseUrl,
-});
+
 
 const initialState = {
   isLogin: false,
@@ -33,6 +30,9 @@ const initialState = {
   carts: localStorage.getItem("carts")
     ? JSON.parse(localStorage.getItem("carts"))
     : [],
+  dataProvince: [],
+  dataCity: [],
+  dataDistrict: [],
 };
 export const Context = createContext(initialState);
 export const ContextProvider = (props) => {
@@ -58,14 +58,6 @@ export const ContextProvider = (props) => {
       .then((res) => res.json())
       .then((data) => {
         dispatch({ type: "FETCH_PRODUCT", payload: data });
-      });
-  };
-
-  const fetchCityListAPI = () => {
-    fetch(baseUrl + `/city`)
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch({ type: "FETCH_CITY", payload: data });
       });
   };
 
@@ -97,10 +89,6 @@ export const ContextProvider = (props) => {
     dispatch({ type: "SET_INFORMASI_PEMBELI", payload: data });
   };
 
-  const addAddress = (address) => {
-    dispatch({ type: "SET_ADDRESS", payload: address });
-  };
-
   const addKtpAndNPWP = async (newdata) => {
     const access_token = localStorage.getItem("access_token");
     let data = await fetch(baseUrl + "/add-ktp-npwp", {
@@ -113,21 +101,26 @@ export const ContextProvider = (props) => {
     return data;
   };
 
-  const addAlamat = async (newdata) => {
+  const updateAlamat = async (newdata, id) => {
     const access_token = localStorage.getItem("access_token");
-    const data = await fetch(baseUrl + "/add-alamat", {
+    let data = await fetch(baseUrl + `/alamat${id ? `?${id}` : ''}`, {
       method: "POST",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newdata),
     });
+
+    data = await data.json();
+    dispatch({ type: "SET_ADDRESS", payload: data.data });
   };
 
-  const getOngkir = (data) => {
-    fetch(baseUrl + `/cost/${data.destination}/${data.courier}/${data.weight}`)
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch({ type: "SERVICES", payload: data });
-      });
+  const getOngkir = async (newdata) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/ongkir?senderCityId=${newdata.senderCityId}&recipientDistrictId=${newdata.recipientDistrictId}&weight=${newdata.weight}`, {
+      method: "GET",
+      headers: { access_token },
+    });
+    data = await data.json();
+    dispatch({ type: "SERVICES", payload: data.data });
   };
 
   const editTotalprice = (data) => {
@@ -234,6 +227,7 @@ export const ContextProvider = (props) => {
       } else {
         localStorage.setItem("access_token", data.access_token);
         dispatch({ type: "LOGIN", payload: data.data });
+        dispatch({ type: "SET_ADDRESS", payload: data.data.Alamats[0] });
         return { message: "success" };
       }
     } catch (error) {
@@ -312,7 +306,9 @@ export const ContextProvider = (props) => {
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
+
     dispatch({ type: "FECTH_USER_DATA", payload: data });
+    dispatch({ type: "SET_ADDRESS", payload: data.Alamats[0] });
   };
 
   const fetchTransaksiKomisi = async () => {
@@ -346,6 +342,38 @@ export const ContextProvider = (props) => {
     fetchUserData()
   };
 
+  const getProvince = async () => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/area/province`, {
+      method: "GET",
+      headers: { access_token },
+    });
+    data = await data.json();
+    console.log(data)
+    dispatch({ type: "FETCH_PROVINCE", payload: data.data });
+  };
+
+  const getCity = async (provinceId) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/area/city${provinceId ? `?provinceId=${provinceId}` : ''}`, {
+      method: "GET",
+      headers: { access_token },
+    });
+    data = await data.json();
+    console.log(data)
+    dispatch({ type: "FETCH_CITY", payload: data.data });
+  };
+
+  const getDistrict = async (cityId) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/area/district${cityId ? `?cityId=${cityId}` : ''}`, {
+      method: "GET",
+      headers: { access_token },
+    });
+    data = await data.json();
+    dispatch({ type: "FETCH_DISTRICT", payload: data.data });
+  };
+
   return (
     <Context.Provider
       value={{
@@ -365,9 +393,11 @@ export const ContextProvider = (props) => {
         userData: state.userData,
         transaksiKomisi: state.transaksiKomisi,
         informasiPembeli: state.informasiPembeli,
+        dataProvince: state.dataProvince,
+        dataCity: state.dataCity,
+        dataDistrict: state.dataDistrict,
         fetchBrands,
         fetchProduct,
-        fetchCityListAPI,
         fetchTransaksiBeforePayment,
         fetchTransaksiAfterPayment,
         fetchKomisiData,
@@ -375,7 +405,7 @@ export const ContextProvider = (props) => {
         fetchUserData,
         fetchCarts,
         addKtpAndNPWP,
-        addAlamat,
+        updateAlamat,
         setInformasiPembeli,
         setRefCode,
         addTocart,
@@ -388,7 +418,6 @@ export const ContextProvider = (props) => {
         getRefcode,
         changeCourier,
         deleteCart,
-        addAddress,
         getOngkir,
         login,
         register,
@@ -398,9 +427,15 @@ export const ContextProvider = (props) => {
         logout,
         pesananSelesai,
         editProfil,
+        getProvince,
+        getCity,
+        getDistrict,
       }}
     >
       {props.children}
     </Context.Provider>
   );
 };
+
+
+// google-chrome --disable-web-security --user-data-dir="/tmp/chrome_tmp"

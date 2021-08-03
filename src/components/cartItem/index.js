@@ -15,7 +15,6 @@ const CartItem = ({ nama, weight, price, qty, id, discount }) => {
     products,
     editTotalprice,
     fetchCarts,
-    fetchCityListAPI,
     cityLists,
   } = useContext(Context);
   const filtered = carts.filter((cart) => cart.product.id === id);
@@ -50,9 +49,6 @@ const CartItem = ({ nama, weight, price, qty, id, discount }) => {
 
   useEffect(() => {
     fetchCarts();
-    if (cityLists.length < 1) {
-      fetchCityListAPI();
-    }
   }, []);
 
   return (

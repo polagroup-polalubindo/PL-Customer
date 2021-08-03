@@ -10,12 +10,6 @@ export default (state, action) => {
         ...state,
         products: action.payload.filter((el) => el.statusProduk === true),
       };
-
-    case "FETCH_CITY":
-      return {
-        ...state,
-        cityLists: action.payload,
-      };
     case "FETCH_TRANSAKSI_BEFORE_PAYMENT":
       return {
         ...state,
@@ -106,6 +100,21 @@ export default (state, action) => {
       return {
         ...state,
         informasiPembeli: action.payload,
+      };
+    case "FETCH_PROVINCE":
+      return {
+        ...state,
+        dataProvince: action.payload,
+      };
+    case "FETCH_CITY":
+      return {
+        ...state,
+        dataCity: action.payload,
+      };
+    case "FETCH_DISTRICT":
+      return {
+        ...state,
+        dataDistrict: action.payload,
       };
     case "SERVICES":
       return {

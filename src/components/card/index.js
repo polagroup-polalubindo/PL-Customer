@@ -16,7 +16,7 @@ import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 
 export const CardProduct = ({ product }) => {
   const classes = useStyles();
-  const { addTocart, carts, editTotalprice } = useContext(Context);
+  const { addTocart, carts, editTotalprice, userData } = useContext(Context);
   const [count, setCount] = useState(0);
 
   function addCart(product) {
@@ -53,15 +53,18 @@ export const CardProduct = ({ product }) => {
                 height="50"
                 className={classes.logo_komisi}
               />
-              <Typography variant="subtitle2" className={classes.jml_komisi}>
+              <Grid className={classes.jml_komisi}>
+              <Typography variant="subtitle2" >
                 {product.komisiLevel1}
               </Typography>
+              </Grid>
             </>
           ) : null}
         </CardMedia>
         <CardContent style={{ padding: '0.3125rem 0.625rem 0rem' }}>
           <Typography className={classes.produkTitle}>
             {product.namaProduk}
+            {product.komisiLevel1}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
             {product.deskripsi.split(' ').length > 10 ? `${product.deskripsi.split(' ').slice(0, 10).join(' ')} ...` : product.deskripsi}

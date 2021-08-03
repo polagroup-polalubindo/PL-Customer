@@ -8,6 +8,7 @@ import {
   CircularProgress,
   Grid,
   FormControlLabel,
+  Switch
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
@@ -23,7 +24,6 @@ const CartPage = () => {
   const {
     carts,
     address,
-    addAddress,
     getOngkir,
     services,
     totalPrice,
@@ -38,17 +38,18 @@ const CartPage = () => {
     setInformasiPembeli,
     fetchCarts,
     userData,
-    editProfil,
   } = useContext(Context);
   const [check, setCheck] = useState(true);
-  const [courierPicked, setCourierPicked] = useState("");
+  const [courierPicked, setCourierPicked] = useState('ID Express');
   const [servicePicked, setServicePicked] = useState("");
+  const [codeService, setCodeService] = useState(null);
+  const [insurance, setInsurance] = useState(false);
+  const [insuranceFee, setInsuranceFee] = useState('');
   const [checked, setCheked] = useState(ongkosKirim);
   function back() {
     history.push(!refCode ? "/" : `/?ref=${refCode}`);
     resetServices();
     setInformasiPembeli({ nama: "", email: "", phone: "" });
-    addAddress("");
   }
 
   const handleInput = (e) => {
@@ -63,7 +64,7 @@ const CartPage = () => {
     resetServices();
   };
 
-  const selected = (e) => {
+  const selected = (e) => { //PERLU ACTION DISINI
     setCourierPicked(e.target.value);
     getOngkir({
       destination: address.kabupaten,
@@ -73,9 +74,10 @@ const CartPage = () => {
   };
 
   const handleChecked = (kurir) => {
-    setCheked(kurir.cost[0].value);
-    setOngkir(kurir.cost[0].value);
-    setServicePicked(kurir.service);
+    setCheked(kurir);
+    setOngkir(kurir.cost);
+    setServicePicked(kurir.type);
+    setCodeService(kurir.code)
   };
 
   const checkout = async () => {
@@ -129,16 +131,24 @@ const CartPage = () => {
         )
       );
 
+      let totalQuantity = 0, totalWeight = 0, itemName = ''
+      chekedItem.map((item, index) => {
+        totalQuantity += item.qty
+        console.log(item)
+        console.log(item.qty, item.product.weight)
+        totalWeight = totalWeight + (+item.qty * +item.product.weight)
+        itemName = `${index === 0 ? itemName : `${itemName},`} ${item.product.namaProduk}`
+      });
+      console.log(totalWeight)
       let data = {
         userData: informasiPembeli,
         transaksiData: {
-          totalHarga: totalPrice + ongkosKirim,
+          totalHarga: totalPrice + ongkosKirim + insuranceFee,
           ongkosKirim: ongkosKirim,
           kurir: courierPicked,
           serviceKurir: servicePicked,
           namaPenerima: informasiPembeli.nama,
-          alamatPengiriman: `${address?.jalan},${address?.kecamatan},${address?.kabupaten},
-          ${address?.detail}`,
+          alamatPengiriman: `${address.alamat}, ${address.kelurahan}, ${address.District.name}, ${address.City.name}, ${address.Province.name} ${address.kodepos} (${address.detail})`,
           telfonPenerima: informasiPembeli.phone,
           statusPesanan: "menunggu pembayaran",
           statusPembayaran: "menunggu pembayaran",
@@ -146,6 +156,17 @@ const CartPage = () => {
           expiredAt: newDate,
           createdAt: created,
           referralCode: refCode ? refCode : null,
+          insurance,
+          insuranceFee,
+          recipientProvinceId: address.provinsiId,
+          recipientCityId: address.kotaId,
+          recipientDistrictId: address.kecamatanId,
+          recipientAddress: `${address.alamat} [DETAIL: ${address.detail}], ${address.kelurahan}`,
+          recipientZipCode: address.kodepos,
+          itemQuantity: totalQuantity,
+          weight: (totalWeight / 1000).toFixed(2),
+          expressType: codeService,
+          itemName
         },
         value: [],
       };
@@ -161,11 +182,13 @@ const CartPage = () => {
           qty: item.qty,
         });
       });
+
+      console.log(data)
       localStorage.setItem("transaksi", JSON.stringify(data.transaksiData));
       localStorage.setItem("carts", "[]")
       fetchCarts()
       setCourierPicked("");
-      setCheked(ongkosKirim);
+      // setCheked(services ? services.find(el=> ongkosKirim : null);
       const response = await checkoutCart(data);
       if (response.message === "Success") {
         history.push(!refCode ? "/pembayaran" : `/pembayaran?ref=${refCode}`);
@@ -178,36 +201,40 @@ const CartPage = () => {
     }
   };
 
+  // 
   useEffect(() => {
     fetchProduct();
   }, []);
 
+  // 
   useEffect(() => {
     if (userData) {
-      if (userData.alamat && !address.kabupaten) {
-        let jalan, detail, kecamatan, kabupaten
-        let alamatSplit = userData.alamat.split(',')
-
-        kabupaten = alamatSplit[alamatSplit.length - 1]
-        kecamatan = alamatSplit[alamatSplit.length - 2]
-
-        let checkDetail = alamatSplit[alamatSplit.length - 3]
-
-        if (checkDetail.split('[').length > 1) {
-          let temp = checkDetail.split('[')
-
-          jalan = alamatSplit.slice(0, alamatSplit.length - 2).join(',').split('[')[0]
-          detail = temp[temp.length - 1].slice(0, temp[temp.length - 1].length - 1)
-        } else {
-          jalan = alamatSplit.slice(0, alamatSplit.length - 2).join(',')
-        }
-        addAddress({ kabupaten, kecamatan, jalan, detail });
-      }
-
       setInformasiPembeli({ nama: userData.nama || '', email: userData.email || '', phone: userData.phone || '' })
-
     }
-  }, [userData, address])
+  }, [userData])
+
+  // 
+  useEffect(() => {
+    let countTotalWeight = 0
+    carts.forEach(cart => {
+      countTotalWeight += ((cart.qty * cart.product.weight) / 1000)
+    })
+    if (address && address.kecamatanId) {
+      let data = {
+        senderCityId: 38,
+        recipientDistrictId: address.kecamatanId,
+        weight: countTotalWeight
+      }
+      getOngkir(data);
+    }
+  }, [address, carts])
+
+  useEffect(() => {
+    if (insurance) {
+      setInsuranceFee(Math.round(totalPrice * (0.2 / 100)))
+    }
+    else setInsuranceFee(0)
+  }, [insurance, totalPrice]);
 
   return (
     <>
@@ -259,7 +286,7 @@ const CartPage = () => {
             disabled
           />
         </div>
-        {address.kabupaten ? (
+        {address.alamat ? (
           <div>
             <Typography className={classes.formText}>
               Alamat Pengiriman
@@ -269,8 +296,7 @@ const CartPage = () => {
                 style={{ margin: "0.5rem 0 1rem 0.5rem" }}
                 className={classes.innerBoxText}
               >
-                {address.jalan},{address.kecamatan},{address.kabupaten},
-                {address.detail}
+                {address.alamat}, {address.kelurahan}, {address.District.name}, {address.City.name}, {address.Province.name} {address.kodepos} ({address.detail})
               </Typography>
               <Button
                 style={{
@@ -313,11 +339,9 @@ const CartPage = () => {
           className={classes.select}
           value={courierPicked}
           onChange={selected}
-          disabled={!address.kabupaten}
+          disabled={!address.alamat}
         >
-          <option className={classes.option}>Pilih Kurir</option>
-          <option className={classes.option}>tiki</option>
-          <option className={classes.option}>jne</option>
+          <option className={classes.option}>ID Express</option>
         </select>
         <Grid container alignItems="center">
           {services === null && courierPicked !== "" && (
@@ -328,29 +352,29 @@ const CartPage = () => {
             </Grid>
           )}
           {services &&
-            services.map((service) => (
-              <>
-                <Grid item xs={8} key={service.service}>
+            services.map((service, index) => (
+              service.cost !== 0 && <>
+                <Grid item xs={8} key={index}>
                   <FormControlLabel
                     control={
                       <Checkbox
                         checked={
-                          checked === service.cost[0].value ? true : false
+                          checked === service ? true : false
                         }
                         onChange={() => handleChecked(service)}
-                        key={service.service}
+                        key={service.type}
                       />
                     }
                     label={
-                      <Grid style={{ fontSize: 14}}>
-                        {service.service} | {service.cost[0].etd} Day
+                      <Grid style={{ fontSize: 14 }}>
+                        {service.type}
                       </Grid>
                     }
                   />
                 </Grid>
 
                 <Grid item xs={4} style={{ fontSize: 14, textAlign: 'right' }}>
-                  Rp. {service.cost[0].value}
+                  Rp. {service.cost}
                 </Grid>
               </>
             ))}
@@ -395,6 +419,55 @@ const CartPage = () => {
           </Typography>
           <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
             Rp {new Number(totalPrice).toLocaleString("id-ID")}
+          </Typography>
+        </div>
+      </Paper>
+
+      <Paper className={classes.box2} elevation={3}>
+        <div
+          style={{
+            margin: "0.3rem",
+            marginTop: "0.5rem",
+            display: 'flex',
+            justifyContent: "space-between",
+            padding: "0.4rem",
+            alignItems: 'center'
+          }}
+        >
+          <Grid style={{ display: 'flex', alignItems: 'center' }}>
+            <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
+              Asuransi
+            </Typography>
+            <Switch
+              checked={insurance}
+              onChange={(e) => setInsurance(e.target.checked)}
+              name="insurance"
+              inputProps={{ 'aria-label': 'secondary checkbox' }}
+              label="Small"
+
+            />
+          </Grid>
+          <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
+            Rp {new Number(insuranceFee).toLocaleString("id-ID")}
+          </Typography>
+        </div>
+      </Paper>
+
+      <Paper className={classes.box2} elevation={3}>
+        <div
+          style={{
+            margin: "0.3rem",
+            marginTop: "0.5rem",
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "0.4rem",
+          }}
+        >
+          <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
+            Total Tagihan
+          </Typography>
+          <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
+            Rp {new Number(totalPrice + ongkosKirim + insuranceFee).toLocaleString("id-ID")}
           </Typography>
         </div>
       </Paper>

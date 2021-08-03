@@ -23,6 +23,7 @@ export default function CenteredGrid() {
     setRefCode,
     logout,
     editProfil,
+    address
   } = useContext(Context);
 
   const history = useHistory();
@@ -59,10 +60,10 @@ export default function CenteredGrid() {
       nama: userData.nama,
       email: userData.email,
       phone: userData.phone,
-      alamat: userData.alamat,
-      totalPembelian: userData.totalPembelian
+      totalPembelian: userData.totalPembelian,
+      alamat: address && address.id ?  `${address.alamat}, ${address.kelurahan}, ${address.District.name}, ${address.City.name}, ${address.Province.name} ${address.kodepos} (${address.detail})` : ''
     })
-  }, [userData])
+  }, [userData, address])
 
   const handleChange = (e) => {
     if (e.target.name === 'phone') {

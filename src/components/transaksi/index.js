@@ -86,6 +86,7 @@ const Transaksi = () => {
               className={
                 transaksiType === option.value ? classes.optColor : null
               }
+              style={{ display: 'flex', alignItems: 'center' }}
             >
               {option.icon}
               {option.value}
@@ -134,17 +135,16 @@ const Transaksi = () => {
                     <Grid item xs={4}>
                       <Typography variant="body2">
                         konfirmasi sebelum <br />
-                        {item.expiredAt.split("T")[0]}-
-                        {item.expiredAt.split("T")[1].split(".")[0]}
+                        {item.expiredAt && item.expiredAt.split("T")[0]}-
+                        {item.expiredAt && item.expiredAt.split("T")[1].split(".")[0]}
                       </Typography>
                     </Grid>
 
                     <Grid item xs={6}>
                       <Typography variant="body2">
                         {item.Carts.length > 1 ? (
-                          <>{item.Carts.length} barang lainnya </>
+                          <>{item.Carts.length} barang lainnya <br /> </>
                         ) : null}
-                        <br />
                         Total belanja
                         <br />
                         Rp. {item.totalHarga}
@@ -169,95 +169,95 @@ const Transaksi = () => {
             ))}
           </>
         ) : (
-            <>
-              {transaksiAfterPayment &&
-                transaksiAfterPayment.map((item) => (
-                  <Paper className={classes.paper}>
-                    <Grid container spacing={3} alignItems="center">
-                      <Grid item xs={2} style={{ textAlign: "right" }}>
-                        <LocalMallIcon />
-                      </Grid>
-                      <Grid item xs={4}>
-                        <b>Belanja</b>
-                        {
-                          item.referralCode && <Grid style={{ backgroundColor: '#aaff7f', padding: 1, borderRadius: 3, width: 75, textAlign: 'center', marginTop: 3 }}>
-                            <p style={{ color: 'green', margin: 0, fontSize: 12 }}>{item.referralCode}</p>
-                          </Grid>
-                        }
-                        <p style={{ margin: 0, marginTop: 3, color: 'gray', fontSize: 13 }}>{item.createdAt.split("T")[0]}</p>
-                      </Grid>
-                      <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Button
-                          variant="contained"
-                          disableElevation
-                          style={{
-                            backgroundColor: "#ffbbbe",
-                            color: "red",
-                            fontSize: "0.7rem",
-                          }}
-                        >
-                          {item.statusPengiriman}
-                        </Button>
-                      </Grid>
+          <>
+            {transaksiAfterPayment &&
+              transaksiAfterPayment.map((item) => (
+                <Paper className={classes.paper}>
+                  <Grid container spacing={3} alignItems="center">
+                    <Grid item xs={2} style={{ textAlign: "right" }}>
+                      <LocalMallIcon />
                     </Grid>
+                    <Grid item xs={4}>
+                      <b>Belanja</b>
+                      {
+                        item.referralCode && <Grid style={{ backgroundColor: '#aaff7f', padding: 1, borderRadius: 3, width: 75, textAlign: 'center', marginTop: 3 }}>
+                          <p style={{ color: 'green', margin: 0, fontSize: 12 }}>{item.referralCode}</p>
+                        </Grid>
+                      }
+                      <p style={{ margin: 0, marginTop: 3, color: 'gray', fontSize: 13 }}>{item.createdAt.split("T")[0]}</p>
+                    </Grid>
+                    <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button
+                        variant="contained"
+                        disableElevation
+                        style={{
+                          backgroundColor: "#ffbbbe",
+                          color: "red",
+                          fontSize: "0.7rem",
+                        }}
+                      >
+                        {item.statusPengiriman}
+                      </Button>
+                    </Grid>
+                  </Grid>
 
-                    <hr />
+                  <hr />
 
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={3}>
-                        <img
-                          src={item.Carts[0].Produk && item.Carts[0].Produk.fotoProduk}
-                          alt={item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}
-                          width="50"
-                          height="50"
-                        />
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Typography variant="body2">
-                          <b> {item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}</b>
-                          <br />
-                          {item.Carts[0].qty} barang
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={3}>
+                      <img
+                        src={item.Carts[0].Produk && item.Carts[0].Produk.fotoProduk}
+                        alt={item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}
+                        width="50"
+                        height="50"
+                      />
+                    </Grid>
+                    <Grid item xs={9}>
+                      <Typography variant="body2">
+                        <b> {item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}</b>
+                        <br />
+                        {item.Carts[0].qty} barang
                       </Typography>
-                      </Grid>
-                      {/* <Grid item xs={4}>
+                    </Grid>
+                    {/* <Grid item xs={4}>
                       <Typography variant="body2">
                         konfirmasi sebelum <br />
                         22/03/2021 23:00
                       </Typography>
                     </Grid> */}
-                      <Grid item xs={6}>
-                        <Typography variant="body2">
-                          +{item.Carts.length} barang lainnya
+                    <Grid item xs={6}>
+                      <Typography variant="body2">
+                        +{item.Carts.length} barang lainnya
                         <br />
                         Total belanja
                         <br />
                         Rp. {item.totalHarga}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        {item.statusPengiriman === "dalam pengiriman" ? (
-                          <Button
-                            style={{
-                              backgroundColor: "green",
-                              color: "white",
-                              fontSize: "0.7rem",
-                              marginLeft: "4rem",
-                            }}
-                            onClick={() => handlePesananSampai(item)}
-                          >
-                            Pesanan sudah sampai
-                          </Button>
-                        ) : (
-                            ""
-                          )}
-                      </Grid>
+                      </Typography>
                     </Grid>
-                  </Paper>
-                ))}
+                    <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      {item.statusPengiriman === "dalam pengiriman" ? (
+                        <Button
+                          style={{
+                            backgroundColor: "green",
+                            color: "white",
+                            fontSize: "0.7rem",
+                            marginLeft: "4rem",
+                          }}
+                          onClick={() => handlePesananSampai(item)}
+                        >
+                          Pesanan sudah sampai
+                        </Button>
+                      ) : (
+                        ""
+                      )}
+                    </Grid>
+                  </Grid>
+                </Paper>
+              ))}
 
-              <br />
-            </>
-          )}
+            <br />
+          </>
+        )}
       </div>
       <BottomNav />
     </>
