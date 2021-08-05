@@ -28,7 +28,8 @@ const AlamatPengiriman = () => {
     address,
     getProvince,
     getCity,
-    getDistrict, } = useContext(Context);
+    getDistrict,
+    setAlamat } = useContext(Context);
   const [jalan, setJalan] = useState("");
   const [detail, setDetail] = useState("");
   const [kelurahan, setKelurahan] = useState("");
@@ -48,7 +49,6 @@ const AlamatPengiriman = () => {
 
   useEffect(async () => {
     if (address && address.alamat) {
-      console.log(address)
       await setIsEdit(true)
       await setJalan(address.alamat)
       await setDetail(address.detail)
@@ -100,6 +100,23 @@ const AlamatPengiriman = () => {
           kodepos,
           keterangan
         });
+      } else {
+        await setAlamat({
+          alamat: jalan,
+          detail,
+          kelurahan,
+          kecamatan,
+          kota,
+          provinsi,
+          kodepos,
+          keterangan,
+          District: dataDistrict.find(el => el.id === kecamatan),
+          City: dataCity.find(el => el.id === kota),
+          Province: dataProvince.find(el => el.id === provinsi),
+          kecamatanId: kecamatan,
+          kotaId: kota,
+          provinsiId: provinsi,
+        })
       }
       history.push(!refCode ? "/cart" : `/cart?ref=${refCode}`);
     }

@@ -12,7 +12,7 @@ const Pembayaran = () => {
   const history = useHistory();
   const { totalPrice, ongkosKirim, refCode, resetLocal } = useContext(Context);
   let dataTransaksi = JSON.parse(localStorage.getItem("transaksi"));
-console.log(dataTransaksi)
+
   const handleBackToHome = () => {
     history.push(refCode ? `/?ref=${refCode}` : "/");
     localStorage.removeItem("transaksi");

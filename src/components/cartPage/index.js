@@ -38,6 +38,14 @@ const CartPage = () => {
     setInformasiPembeli,
     fetchCarts,
     userData,
+    register,
+    login,
+    updateAlamat,
+    fetchUserData,
+    setAlamat,
+    dataDistrict,
+    dataCity,
+    dataProvince
   } = useContext(Context);
   const [check, setCheck] = useState(true);
   const [courierPicked, setCourierPicked] = useState('ID Express');
@@ -49,7 +57,7 @@ const CartPage = () => {
   function back() {
     history.push(!refCode ? "/" : `/?ref=${refCode}`);
     resetServices();
-    setInformasiPembeli({ nama: "", email: "", phone: "" });
+    setInformasiPembeli({ nama: "", email: "", phone: "", pass: "", rePass: "" });
   }
 
   const handleInput = (e) => {
@@ -81,129 +89,199 @@ const CartPage = () => {
   };
 
   const checkout = async () => {
-    const chekedItem = carts.filter((item) => item.checked);
-    if (
-      informasiPembeli.nama === "" ||
-      informasiPembeli.phone === "" ||
-      informasiPembeli.email === ""
-    ) {
-      Swal.fire({
-        title: "Informasi Pembeli belum lengkap",
-        icon: "error",
-      });
-    } else if (
-      informasiPembeli.phone.length < 10 ||
-      informasiPembeli.phone.length > 13
-    ) {
-      Swal.fire({
-        title: "nomor hp minimum 10 digit dan maksimum 13 digit",
-        icon: "error",
-      });
-    } else if (courierPicked === "" || servicePicked === "") {
-      Swal.fire({
-        title: "Pilih Kurir untuk pengiriman",
-        icon: "error",
-      });
-    } else if (chekedItem.length === 0) {
-      Swal.fire({
-        title: "Tidak ada barang di cart",
-        icon: "error",
-      });
-    } else {
-      let created = new Date(
-        Date.UTC(
-          2021,
-          new Date().getMonth(),
-          new Date().getDate(),
-          new Date().getHours(),
-          new Date().getMinutes(),
-          new Date().getSeconds()
-        )
-      );
-      let newDate = new Date(
-        Date.UTC(
-          2021,
-          new Date().getMonth(),
-          new Date().getDate() + 1,
-          new Date().getHours(),
-          new Date().getMinutes(),
-          new Date().getSeconds()
-        )
-      );
-
-      let totalQuantity = 0, totalWeight = 0, itemName = ''
-      chekedItem.map((item, index) => {
-        totalQuantity += item.qty
-        console.log(item)
-        console.log(item.qty, item.product.weight)
-        totalWeight = totalWeight + (+item.qty * +item.product.weight)
-        itemName = `${index === 0 ? itemName : `${itemName},`} ${item.product.namaProduk}`
-      });
-      console.log(totalWeight)
-      let data = {
-        userData: informasiPembeli,
-        transaksiData: {
-          totalHarga: totalPrice + ongkosKirim + insuranceFee,
-          ongkosKirim: ongkosKirim,
-          kurir: courierPicked,
-          serviceKurir: servicePicked,
-          namaPenerima: informasiPembeli.nama,
-          alamatPengiriman: `${address.alamat}, ${address.kelurahan}, ${address.District.name}, ${address.City.name}, ${address.Province.name} ${address.kodepos} (${address.detail})`,
-          telfonPenerima: informasiPembeli.phone,
-          statusPesanan: "menunggu pembayaran",
-          statusPembayaran: "menunggu pembayaran",
-          statusPengiriman: "menunggu pembayaran",
-          expiredAt: newDate,
-          createdAt: created,
-          referralCode: refCode ? refCode : null,
-          insurance,
-          insuranceFee,
-          recipientProvinceId: address.provinsiId,
-          recipientCityId: address.kotaId,
-          recipientDistrictId: address.kecamatanId,
-          recipientAddress: `${address.alamat} [DETAIL: ${address.detail}], ${address.kelurahan}`,
-          recipientZipCode: address.kodepos,
-          itemQuantity: totalQuantity,
-          weight: (totalWeight / 1000).toFixed(2),
-          expressType: codeService,
-          itemName
-        },
-        value: [],
-      };
-      if (localStorage.getItem("access_token")) {
-        data.access_token = localStorage.getItem("access_token");
-      }
-
-      chekedItem.map((item) => {
-        item.product.stock -= item.qty;
-        data.value.push({
-          produk: item.product,
-          ProdukId: item.product.id,
-          qty: item.qty,
+    try {
+      const chekedItem = carts.filter((item) => item.checked);
+      if (
+        informasiPembeli.nama === "" ||
+        informasiPembeli.phone === "" ||
+        informasiPembeli.email === "" ||
+        (!userData && informasiPembeli.pass === "" || informasiPembeli.rePass === "")
+      ) {
+        Swal.fire({
+          title: "Informasi Pembeli belum lengkap",
+          icon: "error",
         });
-      });
+      } else if (
+        informasiPembeli.phone.length < 10 ||
+        informasiPembeli.phone.length > 13
+      ) {
+        Swal.fire({
+          title: "nomor hp minimum 10 digit dan maksimum 13 digit",
+          icon: "error",
+        });
+      } else if (courierPicked === "" || servicePicked === "") {
+        Swal.fire({
+          title: "Pilih Kurir untuk pengiriman",
+          icon: "error",
+        });
+      } else if (chekedItem.length === 0) {
+        Swal.fire({
+          title: "Tidak ada barang di cart",
+          icon: "error",
+        });
+      } else {
 
-      console.log(data)
-      localStorage.setItem("transaksi", JSON.stringify(data.transaksiData));
-      localStorage.setItem("carts", "[]")
-      fetchCarts()
-      setCourierPicked("");
-      // setCheked(services ? services.find(el=> ongkosKirim : null);
-      const response = await checkoutCart(data);
-      if (response.message === "Success") {
-        history.push(!refCode ? "/pembayaran" : `/pembayaran?ref=${refCode}`);
-        setInformasiPembeli({ nama: "", email: "", phone: "" });
-      } else if (response.message === "go to login page") {
-        history.push(!refCode ? "/login" : `/login?ref=${refCode}`);
-        resetServices();
-        resetAddress();
+        if (!userData) {
+          if (informasiPembeli.pass !== informasiPembeli.rePass) {
+
+            throw 'Password dan konfimasi password tidak sama'
+          } else {
+            const response = await register({ email: informasiPembeli.email, phone: informasiPembeli.phone, nama: informasiPembeli.nama, password: informasiPembeli.pass });
+            console.log('register done')
+            if (response.message === "Success") {
+              await login({ email: informasiPembeli.email, password: informasiPembeli.pass })
+              console.log('login done')
+
+              await updateAlamat({
+                alamat: address.alamat,
+                detail: address.detail,
+                kelurahan: address.kelurahan,
+                kecamatan: address.kecamatan,
+                kota: address.kota,
+                provinsi: address.provinsi,
+                kodepos: address.kodepos,
+                keterangan: address.keterangan
+              });
+              console.log('updateAlamat done')
+
+              // await setAlamat({
+              //   alamat: address.alamat,
+              //   detail: address.detail,
+              //   kelurahan: address.kelurahan,
+              //   kecamatan: address.kecamatan,
+              //   kota: address.kota,
+              //   provinsi: address.provinsi,
+              //   kodepos: address.kodepos,
+              //   keterangan: address.keterangan,
+              //   District: dataDistrict.find(el => el.id === address.kecamatan),
+              //   City: dataCity.find(el => el.id === address.kota),
+              //   Province: dataProvince.find(el => el.id === address.provinsi),
+              //   kecamatanId: address.kecamatan,
+              //   kotaId: address.kota,
+              //   provinsiId: address.provinsi,
+              // })
+              // console.log('setAlamat done')
+              // console.log(address)
+            }
+          }
+        }
+
+
+        let created = new Date(
+          Date.UTC(
+            2021,
+            new Date().getMonth(),
+            new Date().getDate(),
+            new Date().getHours(),
+            new Date().getMinutes(),
+            new Date().getSeconds()
+          )
+        );
+        let newDate = new Date(
+          Date.UTC(
+            2021,
+            new Date().getMonth(),
+            new Date().getDate() + 1,
+            new Date().getHours(),
+            new Date().getMinutes(),
+            new Date().getSeconds()
+          )
+        );
+
+        let totalQuantity = 0, totalWeight = 0, itemName = ''
+        chekedItem.map((item, index) => {
+          totalQuantity += item.qty
+          totalWeight = totalWeight + (+item.qty * +item.product.weight)
+          itemName = `${index === 0 ? itemName : `${itemName},`} ${item.product.namaProduk}`
+        });
+
+        let data = {
+          userData: informasiPembeli,
+          transaksiData: {
+            totalHarga: totalPrice + ongkosKirim + insuranceFee,
+            ongkosKirim: ongkosKirim,
+            kurir: courierPicked,
+            serviceKurir: servicePicked,
+            namaPenerima: informasiPembeli.nama,
+            alamatPengiriman: `${address.alamat}, ${address.kelurahan}, ${address.District.name}, ${address.City.name}, ${address.Province.name} ${address.kodepos} (${address.detail})`,
+            telfonPenerima: informasiPembeli.phone,
+            statusPesanan: "menunggu pembayaran",
+            statusPembayaran: "menunggu pembayaran",
+            statusPengiriman: "menunggu pembayaran",
+            expiredAt: newDate,
+            createdAt: created,
+            referralCode: refCode ? refCode : null,
+            insurance,
+            insuranceFee,
+            recipientProvinceId: address.provinsiId,
+            recipientCityId: address.kotaId,
+            recipientDistrictId: address.kecamatanId,
+            recipientAddress: `${address.alamat} [DETAIL: ${address.detail}], ${address.kelurahan}`,
+            recipientZipCode: address.kodepos,
+            itemQuantity: totalQuantity,
+            weight: (totalWeight / 1000).toFixed(2),
+            expressType: codeService,
+            itemName
+          },
+          value: [],
+        };
+        if (localStorage.getItem("access_token")) {
+          data.access_token = localStorage.getItem("access_token");
+        }
+
+        chekedItem.map((item) => {
+          item.product.stock -= item.qty;
+          data.value.push({
+            produk: item.product,
+            ProdukId: item.product.id,
+            qty: item.qty,
+          });
+        });
+
+        localStorage.setItem("transaksi", JSON.stringify(data.transaksiData));
+        localStorage.setItem("carts", "[]")
+        fetchCarts()
+        setCourierPicked("");
+        // setCheked(services ? services.find(el=> ongkosKirim : null);
+        const response = await checkoutCart(data);
+        if (response.message === "Success") {
+          console.log("address", address)
+
+          history.push(!refCode ? "/pembayaran" : `/pembayaran?ref=${refCode}`);
+          setInformasiPembeli({ nama: "", email: "", phone: "", pass: "", rePass: "" });
+        } else if (response.message === "go to login page") {
+          // history.push(!refCode ? "/login" : `/login?ref=${refCode}`);
+          // resetServices();
+          // resetAddress();
+        }
       }
+    } catch (err) {
+      Swal.fire({
+        title: err,
+        icon: "error",
+      });
     }
   };
 
   // 
   useEffect(() => {
-    fetchProduct();
+    if (!userData && !informasiPembeli.nama && !address.alamat) {
+      Swal.fire({
+        title: 'Apa anda sudah punya akun?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Iya',
+        cancelButtonText: 'Tidak'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          history.push(!refCode ? "/login" : `/login?ref=${refCode}`);
+        }
+      })
+    } else {
+      fetchProduct();
+    }
   }, []);
 
   // 
@@ -260,7 +338,7 @@ const CartPage = () => {
             name="nama"
             value={informasiPembeli.nama}
             onChange={handleInput}
-            disabled
+            disabled={userData}
           />
         </div>
         <div className={classes.formBox}>
@@ -270,7 +348,7 @@ const CartPage = () => {
             name="email"
             value={informasiPembeli.email}
             onChange={handleInput}
-            disabled
+            disabled={userData}
           />
         </div>
         <div className={classes.formBox}>
@@ -283,9 +361,39 @@ const CartPage = () => {
             name="phone"
             value={informasiPembeli.phone}
             onChange={handleInput}
-            disabled
+            disabled={userData}
           />
         </div>
+        {
+          !userData && <>
+            <div className={classes.formBox}>
+              <Typography className={classes.formText}>
+                Kata Sandi
+              </Typography>
+              <InputBase
+                className={classes.form}
+                type="password"
+                name="pass"
+                value={informasiPembeli.pass}
+                onChange={handleInput}
+                disabled={userData}
+              />
+            </div>
+            <div className={classes.formBox}>
+              <Typography className={classes.formText}>
+                Konfirmasi Kata Sandi
+              </Typography>
+              <InputBase
+                className={classes.form}
+                type="password"
+                name="rePass"
+                value={informasiPembeli.rePass}
+                onChange={handleInput}
+                disabled={userData}
+              />
+            </div>
+          </>
+        }
         {address.alamat ? (
           <div>
             <Typography className={classes.formText}>
@@ -344,7 +452,7 @@ const CartPage = () => {
           <option className={classes.option}>ID Express</option>
         </select>
         <Grid container alignItems="center">
-          {services === null && courierPicked !== "" && (
+          {address.alamat && services === null && courierPicked !== "" && (
             <Grid alignItems="center" style={{ textAlign: 'center', width: '100%' }}>
               <CircularProgress
                 style={{ marginTop: "1rem" }}
@@ -471,7 +579,7 @@ const CartPage = () => {
           </Typography>
         </div>
       </Paper>
-      <Button className={classes.btn} onClick={checkout}>
+      <Button className={classes.btn} onClick={checkout} disabled={(carts && carts.length === 0) || !informasiPembeli.nama}>
         Bayar
       </Button>
     </>

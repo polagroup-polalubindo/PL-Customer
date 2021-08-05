@@ -131,7 +131,7 @@ export default (state, action) => {
         ...state,
         carts: [],
         totalPrice: 0,
-        address: {},
+        // address: {},
         courier: "",
         ongkosKirim: 0,
         services: null,

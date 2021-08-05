@@ -113,6 +113,10 @@ export const ContextProvider = (props) => {
     dispatch({ type: "SET_ADDRESS", payload: data.data });
   };
 
+  const setAlamat = (newdata) => {
+    dispatch({ type: "SET_ADDRESS", payload: newdata });
+  }
+
   const getOngkir = async (newdata) => {
     const access_token = localStorage.getItem("access_token");
     let data = await fetch(baseUrl + `/ongkir?senderCityId=${newdata.senderCityId}&recipientDistrictId=${newdata.recipientDistrictId}&weight=${newdata.weight}`, {
@@ -227,7 +231,7 @@ export const ContextProvider = (props) => {
       } else {
         localStorage.setItem("access_token", data.access_token);
         dispatch({ type: "LOGIN", payload: data.data });
-        dispatch({ type: "SET_ADDRESS", payload: data.data.Alamats[0] });
+        if (data.data.Alamats && data.data.Alamats.length > 0) dispatch({ type: "SET_ADDRESS", payload: data.data.Alamats[0] });
         return { message: "success" };
       }
     } catch (error) {
@@ -308,7 +312,7 @@ export const ContextProvider = (props) => {
     data = await data.json();
 
     dispatch({ type: "FECTH_USER_DATA", payload: data });
-    dispatch({ type: "SET_ADDRESS", payload: data.Alamats[0] });
+    if (data.Alamats && data.Alamats.length > 0) dispatch({ type: "SET_ADDRESS", payload: data.Alamats[0] });
   };
 
   const fetchTransaksiKomisi = async () => {
@@ -430,6 +434,7 @@ export const ContextProvider = (props) => {
         getProvince,
         getCity,
         getDistrict,
+        setAlamat,
       }}
     >
       {props.children}

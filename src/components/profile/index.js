@@ -61,7 +61,7 @@ export default function CenteredGrid() {
       email: userData.email,
       phone: userData.phone,
       totalPembelian: userData.totalPembelian,
-      alamat: address && address.id ?  `${address.alamat}, ${address.kelurahan}, ${address.District.name}, ${address.City.name}, ${address.Province.name} ${address.kodepos} (${address.detail})` : ''
+      alamat: address && address.alamat ? `${address.alamat}, ${address.kelurahan}, ${address.District.name}, ${address.City.name}, ${address.Province.name} ${address.kodepos} (${address.detail})` : ''
     })
   }, [userData, address])
 
@@ -168,14 +168,12 @@ export default function CenteredGrid() {
                 <Grid item xs={6}>
                   Total Pembelian
                 </Grid>
-                {komisi && (
-                  <Grid item xs={4}>
-                    Rp.{" "}
-                    {new Number(dataUser.totalPembelian).toLocaleString(
-                      "id-ID"
-                    )}
-                  </Grid>
-                )}
+                <Grid item xs={4}>
+                  Rp.{" "}
+                  {new Number(dataUser.totalPembelian || 0).toLocaleString(
+                    "id-ID"
+                  )}
+                </Grid>
               </Grid>
             </Paper>
           </Grid>
@@ -198,9 +196,11 @@ export default function CenteredGrid() {
                   <p style={{ margin: 0, cursor: 'pointer', fontSize: 13, color: 'blue' }} onClick={() => setOpenModalKomisi(true)}>lihat selengkapnya</p>
                 </Grid>
                 <Grid item xs={4}>
-                  {komisi && komisi.length > 0 && (
-                    <p style={{ margin: 0 }}> Rp. {new Number(komisi[0].totalKomisi).toLocaleString("id-ID")}</p>
-                  )}
+                  {komisi && komisi.length > 0
+                    ? (
+                      <p style={{ margin: 0 }}> Rp. {new Number(komisi[0].totalKomisi || 0).toLocaleString("id-ID")}</p>
+                    )
+                    : 0}
                 </Grid>
               </Grid>
 
