@@ -9,6 +9,8 @@ import LocalMallIcon from "@material-ui/icons/LocalMall";
 import { BottomNav } from "../bottomNav";
 import { Context } from "../../context/globalState";
 import { useHistory } from "react-router";
+import ModalLacak from "./ModalLacak";
+import Swal from 'sweetalert2';
 
 const Transaksi = () => {
   const classes = useStyle();
@@ -23,6 +25,7 @@ const Transaksi = () => {
   } = useContext(Context);
 
   const [transaksiType, setTransaksiType] = useState("Menunggu Pembayaran");
+  const [openModalLacak, setOpenModalLacak] = useState(false)
   const allTransaksiType = [
     {
       value: "Menunggu Pembayaran",
@@ -54,12 +57,26 @@ const Transaksi = () => {
   };
 
   const handlePesananSampai = async (data) => {
-    data.statusPengiriman = "pesanan selesai";
-    data.statusPesanan = "pesanan selesai";
-    const response = await pesananSelesai(data);
-    if (response.message) {
-      fetchTransaksiAfterPayment();
-    }
+    Swal.fire({
+      title: 'Apa pesanan anda sudah sampai?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Iya',
+      cancelButtonText: 'Tidak'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        data.statusPengiriman = "pesanan selesai";
+        data.statusPesanan = "pesanan selesai";
+        const response = await pesananSelesai(data);
+        if (response.message) {
+          fetchTransaksiAfterPayment();
+        }
+      }
+    })
+
+
   };
 
   useEffect(() => {
@@ -195,6 +212,7 @@ const Transaksi = () => {
                           color: "red",
                           fontSize: "0.7rem",
                         }}
+                        onClick={() => item.statusPengiriman === "dalam pengiriman" ? setOpenModalLacak(true) : null}
                       >
                         {item.statusPengiriman}
                       </Button>
@@ -203,8 +221,8 @@ const Transaksi = () => {
 
                   <hr />
 
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={3}>
+                  <Grid container alignItems="center">
+                    <Grid item xs={2}>
                       <img
                         src={item.Carts[0].Produk && item.Carts[0].Produk.fotoProduk}
                         alt={item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}
@@ -212,20 +230,30 @@ const Transaksi = () => {
                         height="50"
                       />
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={item.statusPengiriman === "dalam pengiriman" ? 7 : 9} style={{ paddingLeft: 5 }}>
                       <Typography variant="body2">
                         <b> {item.Carts[0].Produk && item.Carts[0].Produk.namaProduk}</b>
                         <br />
                         {item.Carts[0].qty} barang
                       </Typography>
                     </Grid>
-                    {/* <Grid item xs={4}>
-                      <Typography variant="body2">
-                        konfirmasi sebelum <br />
-                        22/03/2021 23:00
-                      </Typography>
-                    </Grid> */}
-                    <Grid item xs={6}>
+                    {
+                      item.statusPengiriman === "dalam pengiriman" && <Grid item xs={3} style={{ textAlign: 'right' }}>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => setOpenModalLacak(true)}
+                        >
+                          Lacak
+                        </Button>
+                        {
+                          openModalLacak && <ModalLacak open={openModalLacak} handleClose={() => setOpenModalLacak(false)} id={item.noResi} />
+                        }
+                      </Grid>
+                    }
+                  </Grid>
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={5}>
                       <Typography variant="body2">
                         +{item.Carts.length} barang lainnya
                         <br />
@@ -234,7 +262,7 @@ const Transaksi = () => {
                         Rp. {item.totalHarga}
                       </Typography>
                     </Grid>
-                    <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Grid item xs={7} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       {item.statusPengiriman === "dalam pengiriman" ? (
                         <Button
                           style={{

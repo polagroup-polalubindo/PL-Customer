@@ -146,7 +146,7 @@ const AlamatPengiriman = () => {
       </Paper>
       <Paper className={classes.box1} elevation={3}>
         <Typography className={classes.boxText}>Informasi Pembeli</Typography>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>Provinsi</Typography>
           <FormControl variant="outlined" size="small" style={{ width: '100%' }}>
             <Select
@@ -161,7 +161,7 @@ const AlamatPengiriman = () => {
             </Select>
           </FormControl>
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>Kota / Kabupaten</Typography>
           <FormControl variant="outlined" size="small" style={{ width: '100%' }}>
             <Select
@@ -177,7 +177,7 @@ const AlamatPengiriman = () => {
             </Select>
           </FormControl>
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>Kecamatan</Typography>
           <FormControl variant="outlined" size="small" style={{ width: '100%' }}>
             <Select
@@ -193,7 +193,7 @@ const AlamatPengiriman = () => {
             </Select>
           </FormControl>
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>Kelurahan</Typography>
           <TextField
             variant="outlined"
@@ -204,7 +204,7 @@ const AlamatPengiriman = () => {
             onChange={(e) => setKelurahan(e.target.value.toUpperCase())}
           />
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>
             Nama Jalan / No. Rumah / Unit
           </Typography>
@@ -218,7 +218,7 @@ const AlamatPengiriman = () => {
             placeholder="contoh: JALAN MEDAN MERDEKA"
           />
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>
             Detail (Patokan/ Blok/ Unit No)
           </Typography>
@@ -232,7 +232,7 @@ const AlamatPengiriman = () => {
             placeholder="contoh: BLOK AA"
           />
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>
             Kode Pos
           </Typography>
@@ -246,7 +246,7 @@ const AlamatPengiriman = () => {
             placeholder="contoh: 12345"
           />
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>
             Keterangan
           </Typography>

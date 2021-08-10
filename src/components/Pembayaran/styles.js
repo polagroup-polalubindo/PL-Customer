@@ -5,14 +5,15 @@ export const useStyles = makeStyles({
     display: "flex",
     justifyContent: "center",
     flexDirection: "column",
-    margin: "2.5rem 0",
+    margin: "2.5rem 0 0",
     borderRadius: "35px",
-    width: "100%",
+    width: "80%",
     textAlign: "center",
     alignItems: "center",
     background: "#f6f7fb",
+    padding: '1rem'
   },
   content: {
-    margin: "1rem",
+    margin: "1rem 1rem 0 1rem",
   },
 });

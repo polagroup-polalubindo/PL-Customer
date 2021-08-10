@@ -127,10 +127,8 @@ const CartPage = () => {
             throw 'Password dan konfimasi password tidak sama'
           } else {
             const response = await register({ email: informasiPembeli.email, phone: informasiPembeli.phone, nama: informasiPembeli.nama, password: informasiPembeli.pass });
-            console.log('register done')
             if (response.message === "Success") {
               await login({ email: informasiPembeli.email, password: informasiPembeli.pass })
-              console.log('login done')
 
               await updateAlamat({
                 alamat: address.alamat,
@@ -142,26 +140,6 @@ const CartPage = () => {
                 kodepos: address.kodepos,
                 keterangan: address.keterangan
               });
-              console.log('updateAlamat done')
-
-              // await setAlamat({
-              //   alamat: address.alamat,
-              //   detail: address.detail,
-              //   kelurahan: address.kelurahan,
-              //   kecamatan: address.kecamatan,
-              //   kota: address.kota,
-              //   provinsi: address.provinsi,
-              //   kodepos: address.kodepos,
-              //   keterangan: address.keterangan,
-              //   District: dataDistrict.find(el => el.id === address.kecamatan),
-              //   City: dataCity.find(el => el.id === address.kota),
-              //   Province: dataProvince.find(el => el.id === address.provinsi),
-              //   kecamatanId: address.kecamatan,
-              //   kotaId: address.kota,
-              //   provinsiId: address.provinsi,
-              // })
-              // console.log('setAlamat done')
-              // console.log(address)
             }
           }
         }
@@ -245,8 +223,6 @@ const CartPage = () => {
         // setCheked(services ? services.find(el=> ongkosKirim : null);
         const response = await checkoutCart(data);
         if (response.message === "Success") {
-          console.log("address", address)
-
           history.push(!refCode ? "/pembayaran" : `/pembayaran?ref=${refCode}`);
           setInformasiPembeli({ nama: "", email: "", phone: "", pass: "", rePass: "" });
         } else if (response.message === "go to login page") {
@@ -327,11 +303,9 @@ const CartPage = () => {
         </div>
       </Paper>
       <Paper className={classes.box1} elevation={3}>
-        <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-          <Typography className={classes.boxText}>Informasi Pembeli</Typography>
-          <Typography style={{ fontSize: 10, color: 'gray', marginTop: 1, marginLeft: 5, width: '60%' }}>(Jika data tidak sesuai harap diupdate di menu profil)</Typography>
-        </div>
-        <div className={classes.formBox}>
+        <Typography className={classes.boxText}>Informasi Pembeli</Typography>
+        <Typography style={{ fontSize: 10, color: 'gray', marginTop: -3 }}>(Jika data tidak sesuai harap diupdate di menu profil)</Typography>
+        <div>
           <Typography className={classes.formText}>Nama Lengkap</Typography>
           <InputBase
             className={classes.form}
@@ -341,7 +315,7 @@ const CartPage = () => {
             disabled={userData}
           />
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>Email</Typography>
           <InputBase
             className={classes.form}
@@ -351,7 +325,7 @@ const CartPage = () => {
             disabled={userData}
           />
         </div>
-        <div className={classes.formBox}>
+        <div>
           <Typography className={classes.formText}>
             Nomor HP (whatsapp)
           </Typography>
@@ -366,7 +340,7 @@ const CartPage = () => {
         </div>
         {
           !userData && <>
-            <div className={classes.formBox}>
+            <div>
               <Typography className={classes.formText}>
                 Kata Sandi
               </Typography>
@@ -379,7 +353,7 @@ const CartPage = () => {
                 disabled={userData}
               />
             </div>
-            <div className={classes.formBox}>
+            <div>
               <Typography className={classes.formText}>
                 Konfirmasi Kata Sandi
               </Typography>
@@ -401,7 +375,6 @@ const CartPage = () => {
             </Typography>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Typography
-                style={{ margin: "0.5rem 0 1rem 0.5rem" }}
                 className={classes.innerBoxText}
               >
                 {address.alamat}, {address.kelurahan}, {address.District.name}, {address.City.name}, {address.Province.name} {address.kodepos} ({address.detail})
@@ -441,13 +414,14 @@ const CartPage = () => {
           </>
         )}
       </Paper>
-      <Paper className={classes.box2} elevation={3}>
+      <Paper className={classes.box1} elevation={3}>
         <Typography className={classes.boxText}>Pengiriman</Typography>
         <select
           className={classes.select}
           value={courierPicked}
           onChange={selected}
           disabled={!address.alamat}
+          style={{ marginTop: '0.5rem' }}
         >
           <option className={classes.option}>ID Express</option>
         </select>
@@ -488,7 +462,7 @@ const CartPage = () => {
             ))}
         </Grid>
       </Paper>
-      <Paper className={classes.box2} elevation={3}>
+      <Paper className={classes.box1} elevation={3}>
         <Typography className={classes.boxText}>Ringkasan Belanja</Typography>
         <div className={classes.box}>
           <Checkbox
@@ -531,14 +505,11 @@ const CartPage = () => {
         </div>
       </Paper>
 
-      <Paper className={classes.box2} elevation={3}>
+      <Paper className={classes.box1} elevation={3}>
         <div
           style={{
-            margin: "0.3rem",
-            marginTop: "0.5rem",
             display: 'flex',
             justifyContent: "space-between",
-            padding: "0.4rem",
             alignItems: 'center'
           }}
         >
@@ -561,14 +532,11 @@ const CartPage = () => {
         </div>
       </Paper>
 
-      <Paper className={classes.box2} elevation={3}>
+      <Paper className={classes.box1} elevation={3} style={{ marginBottom: '1rem' }}>
         <div
           style={{
-            margin: "0.3rem",
-            marginTop: "0.5rem",
             display: "flex",
             justifyContent: "space-between",
-            padding: "0.4rem",
           }}
         >
           <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
@@ -579,6 +547,7 @@ const CartPage = () => {
           </Typography>
         </div>
       </Paper>
+
       <Button className={classes.btn} onClick={checkout} disabled={(carts && carts.length === 0) || !informasiPembeli.nama}>
         Bayar
       </Button>

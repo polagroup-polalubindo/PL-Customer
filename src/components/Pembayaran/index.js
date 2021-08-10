@@ -20,9 +20,9 @@ const Pembayaran = () => {
     resetLocal();
   };
   return (
-    <div>
+    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
       <Paper className={classes.box} elevation={3}>
-        <div className={classes.content}>
+        <div>
           <Typography>Bank Pembayaran</Typography>
           <Typography style={{ fontSize: "0.8rem" }}>
             Pembayaran Hanya melalui rekening
@@ -57,6 +57,7 @@ const Pembayaran = () => {
           justifyContent: "center",
           margin: "2rem 0",
           flexDirection: "column",
+          width:'80%'
         }}
       >
         <Button

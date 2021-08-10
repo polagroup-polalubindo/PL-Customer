@@ -37,7 +37,6 @@ const initialState = {
 export const Context = createContext(initialState);
 export const ContextProvider = (props) => {
   const [state, dispatch] = useReducer(appReducers, initialState);
-  // console.log(state, "global state");
 
   useEffect(() => {
     localStorage.setItem("carts", JSON.stringify(state.carts));
@@ -353,7 +352,6 @@ export const ContextProvider = (props) => {
       headers: { access_token },
     });
     data = await data.json();
-    console.log(data)
     dispatch({ type: "FETCH_PROVINCE", payload: data.data });
   };
 
@@ -364,7 +362,6 @@ export const ContextProvider = (props) => {
       headers: { access_token },
     });
     data = await data.json();
-    console.log(data)
     dispatch({ type: "FETCH_CITY", payload: data.data });
   };
 
@@ -376,6 +373,16 @@ export const ContextProvider = (props) => {
     });
     data = await data.json();
     dispatch({ type: "FETCH_DISTRICT", payload: data.data });
+  };
+
+  const trackingOrder = async (waybill) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/tracking/${waybill}`, {
+      method: "GET",
+      headers: { access_token },
+    });
+    data = await data.json();
+    return data
   };
 
   return (
@@ -435,6 +442,7 @@ export const ContextProvider = (props) => {
         getCity,
         getDistrict,
         setAlamat,
+        trackingOrder,
       }}
     >
       {props.children}

@@ -18,8 +18,8 @@ export const useStyles = makeStyles({
     display: "flex",
     justifyContent: "center",
     flexDirection: "column",
-    margin: "1rem 1rem 1rem 1rem",
-    padding: "0.5rem",
+    margin: "1rem 1rem 0 1rem",
+    padding: "1rem",
     borderRadius: "10px",
   },
   box2: {
@@ -52,10 +52,10 @@ export const useStyles = makeStyles({
   formText: {
     fontSize: "0.5rem",
     color: "grey",
-    margin: "0.3rem 0 0.3rem 0.5rem",
+    margin: "0.4rem 0 0.2rem 0rem",
   },
   form: {
-    padding: "0.1rem 0.2rem",
+    padding: "0.1rem 0.5rem",
     display: "flex",
     alignItems: "center",
 
