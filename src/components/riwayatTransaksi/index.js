@@ -42,8 +42,7 @@ export default function CenteredGrid() {
                   <Typography variant="subtitle2">
                     <b>Pencairan Komisi</b>
                     <br />
-                    {transaksi.createdAt.split("T")[0]}{" "}
-                    {transaksi.createdAt.split("T")[1].split(".")[0]}
+                    {transaksi.createdAt}
                     <p style={{ color: "red", fontSize: "20px" }}>
                       - Rp.{" "}
                       {Number(transaksi.nominal).toLocaleString("id-ID")}
@@ -55,8 +54,7 @@ export default function CenteredGrid() {
                   <Typography variant="subtitle2">
                     <b>Komisi</b>
                     <br />
-                    {transaksi.createdAt.split("T")[0]}{" "}
-                    {transaksi.createdAt.split("T")[1].split(".")[0]}
+                    {transaksi.createdAt}
                     <p style={{ color: "green", fontSize: "20px" }}>
                       + Rp.{" "}
                       {new Number(transaksi.nominal).toLocaleString("id-ID")}

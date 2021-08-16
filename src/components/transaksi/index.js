@@ -127,7 +127,7 @@ const Transaksi = () => {
                           <p style={{ color: 'green', margin: 0, fontSize: 12 }}>{item.referralCode}</p>
                         </Grid>
                       }
-                      <p style={{ margin: 0, marginTop: 3, color: 'gray', fontSize: 13 }}>{item.createdAt.split("T")[0]}</p>
+                      <p style={{ margin: 0, marginTop: 3, color: 'gray', fontSize: 13 }}>{item.createdAt}</p>
                     </Grid>
                   </Grid>
 
@@ -201,7 +201,7 @@ const Transaksi = () => {
                           <p style={{ color: 'green', margin: 0, fontSize: 12 }}>{item.referralCode}</p>
                         </Grid>
                       }
-                      <p style={{ margin: 0, marginTop: 3, color: 'gray', fontSize: 13 }}>{item.createdAt.split("T")[0]}</p>
+                      <p style={{ margin: 0, marginTop: 3, color: 'gray', fontSize: 13 }}>{item.createdAt}</p>
                     </Grid>
                     <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <Button

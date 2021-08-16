@@ -54,6 +54,8 @@ const CartPage = () => {
   const [insurance, setInsurance] = useState(false);
   const [insuranceFee, setInsuranceFee] = useState('');
   const [checked, setCheked] = useState(ongkosKirim);
+  const [disableInsurance, setDisableInsurance] = useState(false);
+
   function back() {
     history.push(!refCode ? "/" : `/?ref=${refCode}`);
     resetServices();
@@ -269,8 +271,9 @@ const CartPage = () => {
 
   // 
   useEffect(() => {
-    let countTotalWeight = 0
+    let countTotalWeight = 0, isInsuranceRequired = false
     carts.forEach(cart => {
+      if (cart.product?.asuransiPengiriman === "Wajib") isInsuranceRequired = true
       countTotalWeight += ((cart.qty * cart.product.weight) / 1000)
     })
     if (address && address.kecamatanId) {
@@ -280,6 +283,11 @@ const CartPage = () => {
         weight: countTotalWeight
       }
       getOngkir(data);
+    }
+
+    if (isInsuranceRequired) {
+      setDisableInsurance(true)
+      setInsurance(true)
     }
   }, [address, carts])
 
@@ -523,13 +531,16 @@ const CartPage = () => {
               name="insurance"
               inputProps={{ 'aria-label': 'secondary checkbox' }}
               label="Small"
-
+              disabled={disableInsurance}
             />
           </Grid>
           <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
             Rp {new Number(insuranceFee).toLocaleString("id-ID")}
           </Typography>
         </div>
+        {
+          disableInsurance && <p style={{ margin: 0, fontSize: 13, fontStyle: "italic", color: 'red' }}>* terdapat produk yang wajib asuransi</p>
+        }
       </Paper>
 
       <Paper className={classes.box1} elevation={3} style={{ marginBottom: '1rem' }}>

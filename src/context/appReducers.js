@@ -8,7 +8,7 @@ export default (state, action) => {
     case "FETCH_PRODUCT":
       return {
         ...state,
-        products: action.payload.filter((el) => el.statusProduk === true),
+        products: action.payload.data.filter((el) => el.statusProduk === true),
       };
     case "FETCH_TRANSAKSI_BEFORE_PAYMENT":
       return {
