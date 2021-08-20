@@ -56,7 +56,7 @@ export const ContextProvider = (props) => {
     fetch(baseUrl + `/produk`)
       .then((res) => res.json())
       .then((data) => {
-        dispatch({ type: "FETCH_PRODUCT", payload: data });
+        dispatch({ type: "FETCH_PRODUCT", payload: data.data });
       });
   };
 
