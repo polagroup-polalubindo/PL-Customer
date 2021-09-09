@@ -17,6 +17,7 @@ import { useHistory } from "react-router";
 import CartItem from "../cartItem";
 import { Context } from "../../context/globalState";
 import Swal from "sweetalert2";
+import ModalVoucher from './modalVoucher';
 
 const CartPage = () => {
   const classes = useStyles();
@@ -55,6 +56,10 @@ const CartPage = () => {
   const [insuranceFee, setInsuranceFee] = useState('');
   const [checked, setCheked] = useState(ongkosKirim);
   const [disableInsurance, setDisableInsurance] = useState(false);
+  const [openModalVoucher, setOpenModalVoucher] = useState(false);
+  const [voucher1, setVoucher1] = useState(null);
+  const [voucher2, setVoucher2] = useState(null);
+  const [potonganHarga, setPotonganHarga] = useState(0);
 
   function back() {
     history.push(!refCode ? "/" : `/?ref=${refCode}`);
@@ -89,6 +94,10 @@ const CartPage = () => {
     setServicePicked(kurir.type);
     setCodeService(kurir.code)
   };
+
+  const handleModalVoucher = () => {
+    setOpenModalVoucher(!openModalVoucher)
+  }
 
   const checkout = async () => {
     try {
@@ -178,7 +187,7 @@ const CartPage = () => {
         let data = {
           userData: informasiPembeli,
           transaksiData: {
-            totalHarga: totalPrice + ongkosKirim + insuranceFee,
+            totalHarga: (totalPrice - potonganHarga) + ongkosKirim + insuranceFee,
             ongkosKirim: ongkosKirim,
             kurir: courierPicked,
             serviceKurir: servicePicked,
@@ -201,7 +210,10 @@ const CartPage = () => {
             itemQuantity: totalQuantity,
             weight: (totalWeight / 1000).toFixed(2),
             expressType: codeService,
-            itemName
+            itemName,
+            voucher1: voucher1 ? voucher1.id : null,
+            voucher2: voucher2 ? voucher2.id : null,
+            potonganHarga
           },
           value: [],
         };
@@ -297,6 +309,87 @@ const CartPage = () => {
     }
     else setInsuranceFee(0)
   }, [insurance, totalPrice]);
+
+
+  const setVoucher = (voucher1, voucher2) => {
+    setVoucher1(voucher1)
+    setVoucher2(voucher2)
+
+    countPotonganHarga(voucher1, voucher2)
+    handleModalVoucher()
+  }
+
+  const cancelVoucher = () => {
+    setVoucher1(null)
+    setVoucher2(null)
+    setPotonganHarga(0)
+    handleModalVoucher()
+  }
+
+  const countPotonganHarga = (voucher1, voucher2) => {
+    let newPotonganHarga = 0
+    if (voucher1 && !voucher2) {
+      if (voucher1.typeVoucher === "Diskon") {
+        newPotonganHarga = Math.round(totalPrice * +(voucher1.nominal / 100))
+      } else {
+        newPotonganHarga = +voucher1.nominal
+      }
+
+      if (voucher1.discountMax < 0 && voucher1.discountMax < newPotonganHarga) {
+        newPotonganHarga = +voucher1.discountMax
+      }
+    } else if (voucher1 && voucher2) {
+      if (voucher1.typeVoucher === "Diskon" && voucher2.typeVoucher === "Diskon") {
+        if (voucher1.discountMax === 0 && voucher2.discountMax === 0) { //TANPA MAKSIMAL DISKON
+          newPotonganHarga = Math.round(totalPrice * ((+voucher1.nominal / 100) + (+voucher2.nominal / 100)))
+        }
+        else if (voucher1.discountMax !== 0 && voucher2.discountMax === 0) { //VOUCHER 1 ADA MAKSIMAL DISKON, VOUCHER 2 TIDAK ADA MAKSIMAL DISKON
+          newPotonganHarga = Math.round(totalPrice * (+voucher1.nominal / 100))
+
+          if (voucher1.discountMax < 0 && voucher1.discountMax < newPotonganHarga) {
+            newPotonganHarga = +voucher1.discountMax
+          }
+
+          newPotonganHarga = Math.round((totalPrice - newPotonganHarga) * (+voucher2.nominal / 100))
+        }
+        else if (voucher1.discountMax === 0 && voucher2.discountMax !== 0) { //VOUCHER 1 TIDAK ADA MAKSIMAL DISKON, VOUCHER 2 ADA MAKSIMAL DISKON
+          newPotonganHarga = Math.round(totalPrice * (+voucher2.nominal / 100))
+
+          if (voucher2.discountMax < 0 && voucher2.discountMax < newPotonganHarga) {
+            newPotonganHarga = +voucher2.discountMax
+          }
+
+          newPotonganHarga = Math.round((totalPrice - newPotonganHarga) * (+voucher1.nominal / 100))
+        }
+        else { //VOUCHER 1 ADA MAKSIMAL DISKON, VOUCHER 2 ADA MAKSIMAL DISKON
+          newPotonganHarga = Math.round(totalPrice * ((+voucher1.nominal / 100) + (+voucher2.nominal / 100)))
+
+          if ((voucher1.discountMax + voucher2.discountMax) > newPotonganHarga) {
+            newPotonganHarga = (voucher1.discountMax + voucher2.discountMax)
+          }
+        }
+      }
+      else if (voucher1.typeVoucher === "Nominal" && voucher2.typeVoucher === "Nominal") {
+        newPotonganHarga = +voucher1.nominal + +voucher2.nominal
+      }
+      else if (voucher1.typeVoucher === "Diskon" && voucher2.typeVoucher === "Nominal") {
+        newPotonganHarga = Math.round((totalPrice - +voucher2.nominal) * ((+voucher1.nominal) / 100))
+
+        if (voucher1.discountMax < 0 && voucher1.discountMax < newPotonganHarga) {
+          newPotonganHarga = +voucher1.discountMax
+        }
+      }
+      else if (voucher1.typeVoucher === "Nominal" && voucher2.typeVoucher === "Diskon") {
+        newPotonganHarga = Math.round((totalPrice - +voucher1.nominal) * ((+voucher2.nominal) / 100))
+
+        if (voucher2.discountMax < 0 && voucher2.discountMax < newPotonganHarga) {
+          newPotonganHarga = +voucher2.discountMax
+        }
+      }
+    }
+
+    setPotonganHarga(newPotonganHarga)
+  }
 
   return (
     <>
@@ -470,6 +563,37 @@ const CartPage = () => {
             ))}
         </Grid>
       </Paper>
+
+      <Paper id="asuransi" className={classes.box1} elevation={3}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: "space-between",
+            alignItems: 'center'
+          }}
+        >
+          <Grid style={{ display: 'flex', alignItems: 'center' }}>
+            <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
+              Asuransi
+            </Typography>
+            <Switch
+              checked={insurance}
+              onChange={(e) => setInsurance(e.target.checked)}
+              name="insurance"
+              inputProps={{ 'aria-label': 'secondary checkbox' }}
+              label="Small"
+              disabled={disableInsurance}
+            />
+          </Grid>
+          <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
+            Rp {new Number(insuranceFee).toLocaleString("id-ID")}
+          </Typography>
+        </div>
+        {
+          disableInsurance && <p style={{ margin: 0, fontSize: 13, fontStyle: "italic", color: 'red' }}>* terdapat produk yang wajib asuransi</p>
+        }
+      </Paper>
+
       <Paper className={classes.box1} elevation={3}>
         <Typography className={classes.boxText}>Ringkasan Belanja</Typography>
         <div className={classes.box}>
@@ -521,26 +645,24 @@ const CartPage = () => {
             alignItems: 'center'
           }}
         >
-          <Grid style={{ display: 'flex', alignItems: 'center' }}>
+          <Grid style={{ alignItems: 'center' }}>
             <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
-              Asuransi
+              Pakai Voucher
             </Typography>
-            <Switch
-              checked={insurance}
-              onChange={(e) => setInsurance(e.target.checked)}
-              name="insurance"
-              inputProps={{ 'aria-label': 'secondary checkbox' }}
-              label="Small"
-              disabled={disableInsurance}
-            />
+            {
+              potonganHarga > 0 && <p style={{ margin: 0, marginTop: 5, fontSize: 13 }}>Potongan harga sebesar Rp.{potonganHarga}</p>
+            }
           </Grid>
-          <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
-            Rp {new Number(insuranceFee).toLocaleString("id-ID")}
-          </Typography>
+          <Button variant="outlined" style={{ fontWeight: 'bold', backgroundColor: voucher1 ? 'green' : null, color: voucher1 ? 'white' : null }} onClick={handleModalVoucher}>
+            {
+              voucher2
+                ? '2 Voucher'
+                : voucher1
+                  ? voucher1.code
+                  : 'Lihat Voucher'
+            }
+          </Button>
         </div>
-        {
-          disableInsurance && <p style={{ margin: 0, fontSize: 13, fontStyle: "italic", color: 'red' }}>* terdapat produk yang wajib asuransi</p>
-        }
       </Paper>
 
       <Paper className={classes.box1} elevation={3} style={{ marginBottom: '1rem' }}>
@@ -554,7 +676,7 @@ const CartPage = () => {
             Total Tagihan
           </Typography>
           <Typography style={{ fontSize: 13, fontWeight: "bold" }}>
-            Rp {new Number(totalPrice + ongkosKirim + insuranceFee).toLocaleString("id-ID")}
+            Rp {new Number((totalPrice - potonganHarga) + ongkosKirim + insuranceFee).toLocaleString("id-ID")}
           </Typography>
         </div>
       </Paper>
@@ -562,6 +684,10 @@ const CartPage = () => {
       <Button className={classes.btn} onClick={checkout} disabled={(carts && carts.length === 0) || !informasiPembeli.nama}>
         Bayar
       </Button>
+
+      {
+        openModalVoucher && <ModalVoucher open={openModalVoucher} handleClose={handleModalVoucher} setVoucher={setVoucher} voucher1={voucher1} voucher2={voucher2} cancelVoucher={cancelVoucher} />
+      }
     </>
   );
 };

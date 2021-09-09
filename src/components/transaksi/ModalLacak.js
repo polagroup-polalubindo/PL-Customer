@@ -40,36 +40,47 @@ const statusIDExpress = {
 }
 
 const ModalLacak = ({ open, handleClose, id }) => {
-  const [data, setData] = useState({
-    noResi: "IDE005617475152",
-    tanggalPengiriman: 1628149384,
-    kurir: "ID Express (STD)",
-    namaPembeli: "Muhamad Prasetio",
-    kecamatan: "Ciledug",
-    kota: "Tangerang",
-    historys: [
-      {
-        "waybillNo": "IDD955255915888",
-        "operationType": "01",
-        "operationTime": 1294890876859,
-        "courierName": "CourierAdmin",
-        "currentBranch": "HEAD QUARTER",
-        "nextBranchName": "BranchName",
-        "relation": "01",
-        "signer": "signer1"
-      },
-      {
-        "waybillNo": "IDD955255915888",
-        "operationType": "03",
-        "operationTime": 1294890876859,
-        "courierName": "CourierAdmin",
-        "currentBranch": "HEAD QUARTER",
-        "nextBranchName": "BranchName",
-        "relation": "01",
-        "signer": "signer1"
-      }
-    ]
-  })
+  const [data, setData] = useState(
+  //   {
+  //   noResi: "IDE005617475152",
+  //   tanggalPengiriman: 1628149384,
+  //   kurir: "ID Express (STD)",
+  //   namaPembeli: "Muhamad Prasetio",
+  //   kecamatan: "Ciledug",
+  //   kota: "Tangerang",
+  //   historys: [
+  //     {
+  //       "waybillNo": "IDD955255915888",
+  //       "operationType": "01",
+  //       "operationTime": 1294890876859,
+  //       "courierName": "CourierAdmin",
+  //       "currentBranch": "HEAD QUARTER",
+  //       "nextBranchName": "BranchName",
+  //       "relation": "01",
+  //       "signer": "signer1"
+  //     },
+  //     {
+  //       "waybillNo": "IDD955255915888",
+  //       "operationType": "03",
+  //       "operationTime": 1294890876859,
+  //       "courierName": "CourierAdmin",
+  //       "currentBranch": "HEAD QUARTER",
+  //       "nextBranchName": "BranchName",
+  //       "relation": "01",
+  //       "signer": "signer1"
+  //     }
+  //   ]
+  // },
+  {
+    noResi: "",
+    tanggalPengiriman: Date.now(),
+    kurir: "",
+    namaPembeli: "",
+    kecamatan: "",
+    kota: "",
+    historys: []
+  }
+  )
   const { trackingOrder } = useContext(Context);
 
   useEffect(() => {
@@ -135,7 +146,7 @@ const ModalLacak = ({ open, handleClose, id }) => {
           maxWidth: '80%',
           width: 500,
           maxHeight: '90%',
-          minheight: 320,
+          minHeight: 320,
           display: 'flex',
           flexDirection: 'column',
           borderRadius: 10,

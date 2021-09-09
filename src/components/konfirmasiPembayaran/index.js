@@ -105,7 +105,7 @@ const KonfirmasiPembayaran = () => {
         icon: "error",
       });
     } else {
-      if (total != transaksiData.totalHarga) {
+      if (+total.replace('.', '') != transaksiData.totalHarga) {
         Swal.fire({
           title: `nominal transfer tidak sesuai dengan nominal total harga`,
           icon: "error",

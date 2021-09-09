@@ -1,8 +1,7 @@
 import React, { createContext, useEffect, useReducer } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+// import { useHistory, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import appReducers from "./appReducers";
-import Axios from "axios";
 
 const baseUrl = "http://157.230.248.17";
 // const baseUrl = 'http://localhost:4000';
@@ -33,6 +32,7 @@ const initialState = {
   dataProvince: [],
   dataCity: [],
   dataDistrict: [],
+  dataVoucher: []
 };
 export const Context = createContext(initialState);
 export const ContextProvider = (props) => {
@@ -385,6 +385,17 @@ export const ContextProvider = (props) => {
     return data
   };
 
+  const fetchVoucher = async () => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/voucher?status=Sedang Berjalan`, {
+      method: "GET",
+      headers: { access_token },
+    });
+    data = await data.json();
+
+    dispatch({ type: "FETCH_VOUCHER", payload: data.data });
+  };
+
   return (
     <Context.Provider
       value={{
@@ -407,6 +418,7 @@ export const ContextProvider = (props) => {
         dataProvince: state.dataProvince,
         dataCity: state.dataCity,
         dataDistrict: state.dataDistrict,
+        dataVoucher: state.dataVoucher,
         fetchBrands,
         fetchProduct,
         fetchTransaksiBeforePayment,
@@ -443,6 +455,7 @@ export const ContextProvider = (props) => {
         getDistrict,
         setAlamat,
         trackingOrder,
+        fetchVoucher,
       }}
     >
       {props.children}

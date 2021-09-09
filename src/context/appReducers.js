@@ -116,6 +116,11 @@ export default (state, action) => {
         ...state,
         dataDistrict: action.payload,
       };
+      case "FETCH_VOUCHER":
+      return {
+        ...state,
+        dataVoucher: action.payload,
+      };
     case "SERVICES":
       return {
         ...state,

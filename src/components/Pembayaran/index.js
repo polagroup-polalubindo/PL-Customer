@@ -45,7 +45,7 @@ const Pembayaran = () => {
           <Typography
             style={{ fontWeight: "bold", fontSize: "2rem", color: "#ff6701" }}
           >
-            Rp. {new Number(totalPrice + ongkosKirim + dataTransaksi.insuranceFee).toLocaleString("id-ID")}
+            Rp. {new Number((totalPrice - dataTransaksi.potonganHarga) + ongkosKirim + dataTransaksi.insuranceFee).toLocaleString("id-ID")}
           </Typography>
           <Typography>Bayar Sebelum</Typography>
           <Typography>{dataTransaksi.expiredAt.split("T")[0]} - {dataTransaksi.expiredAt.split("T")[1].split(".")[0]}</Typography>
