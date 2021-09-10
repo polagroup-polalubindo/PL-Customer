@@ -7,8 +7,9 @@ export const useStyles = makeStyles({
     margin: "1rem 0.5rem",
   },
   brandBox: {
-    margin: "0 0.3rem",
+    margin: "0 0.3rem 0 0rem",
     textAlign: "center",
+    width: 90,
   },
   brand: {
     borderRadius: "50%",
@@ -16,12 +17,6 @@ export const useStyles = makeStyles({
     margin: "1rem 0.5rem 0 0.5rem",
     border: "none",
     backgroundColor: "grey",
-  },
-  brandText: {
-    fontSize: "0.8rem",
-    color: "grey",
-    alignItems: "center",
-    marginTop: "0.3rem",
   },
   produkCard: {
     display: "flex",

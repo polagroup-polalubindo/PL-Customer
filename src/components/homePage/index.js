@@ -32,7 +32,8 @@ const HomePage = () => {
     getRefcode,
     userData,
     carts,
-    address
+    address,
+    baseUrl
   } = useContext(Context);
   const premier = 100000;
 
@@ -97,30 +98,40 @@ const HomePage = () => {
       <Navbar />
       <div className={classes.topRoot}>
         <div className={classes.root}>
-          <div className={classes.brandBox}>
-            <Fab className={classes.Fab} onClick={() => setSelectedBrand("")}>
+          <div className={classes.brandBox} style={{width: 100}}>
+            <Fab className={classes.Fab} onClick={() => setSelectedBrand(null)}>
               <img src={allBrand} />
             </Fab>
-            <Typography className={classes.brandText}>Semua Produk</Typography>
+            <p style={{
+              fontSize: "0.8rem",
+              color: selectedBrand === null ? "red" : "grey",
+              alignItems: "center",
+              marginTop: "0.3rem",
+            }}>Semua Produk</p>
           </div>
           {brands.map((el) => (
             <div className={classes.brandBox} key={el.id}>
               <Fab
                 className={classes.Fab}
-                onClick={() => setSelectedBrand(el.namaBrand)}
+                onClick={() => setSelectedBrand(el.id)}
               >
-                <img src={brandLogo} />
+                <img src={`${baseUrl}/${el.fotoBrand}`} alt={`logo`} style={{ maxWidth: 50, maxHeight: 50, borderRadius: 30 }} />
               </Fab>
-              <Typography className={classes.brandText}>
+              <Typography style={{
+                fontSize: "0.8rem",
+                color: el.id === selectedBrand ? "red" : "grey",
+                alignItems: "center",
+                marginTop: "0.3rem",
+              }}>
                 {el.namaBrand}
               </Typography>
             </div>
           ))}
         </div>
         {localStorage.getItem("access_token") &&
-        userData?.totalPembelian >= premier &&
-        (!userData?.statusPremier ||
-        (userData?.statusPremier === "aktif" && !userData?.referralStatus))? (
+          userData?.totalPembelian >= premier &&
+          (!userData?.statusPremier ||
+            (userData?.statusPremier === "aktif" && !userData?.referralStatus)) ? (
           <div className={classes.share} style={{ verticalAlign: "middle" }}>
             <Typography style={{ fontSize: 12, fontWeight: "bold" }}>
               Dapatkan komisi tambahan
@@ -177,17 +188,17 @@ const HomePage = () => {
         <Grid container spacing={2} className={classes.produkCard} style={{ marginBottom: carts.length > 0 ? "8rem" : "4rem", padding: '0px 20px' }}>
           {!selectedBrand
             ? products.map((product) => (
-                <CardProduct product={product} key={product.id} />
-              ))
+              <CardProduct product={product} key={product.id} />
+            ))
             : products
-                .filter((prod) => prod.Brand.namaBrand === selectedBrand)
-                .map((product) => (
-                  <CardProduct product={product} key={product.id} />
-                ))}
+              .filter((prod) => prod.Brand.id === selectedBrand)
+              .map((product) => (
+                <CardProduct product={product} key={product.id} />
+              ))}
         </Grid>
       </div>
       <BottomNav />
-    </div>
+    </div >
   );
 };
 

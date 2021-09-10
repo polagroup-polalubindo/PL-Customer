@@ -48,7 +48,7 @@ export const ContextProvider = (props) => {
     fetch(baseUrl + `/brand`)
       .then((res) => res.json())
       .then((data) => {
-        dispatch({ type: "FETCH_BRAND", payload: data });
+        dispatch({ type: "FETCH_BRAND", payload: data.brandList });
       });
   };
 
@@ -399,6 +399,7 @@ export const ContextProvider = (props) => {
   return (
     <Context.Provider
       value={{
+        baseUrl,
         refCode: state.refCode,
         brands: state.brands,
         products: state.products,
