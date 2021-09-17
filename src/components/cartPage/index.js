@@ -60,6 +60,7 @@ const CartPage = () => {
   const [voucher1, setVoucher1] = useState(null);
   const [voucher2, setVoucher2] = useState(null);
   const [potonganHarga, setPotonganHarga] = useState(0);
+  const [disabledForm, setDisabledForm] = useState(true);
 
   function back() {
     history.push(!refCode ? "/" : `/?ref=${refCode}`);
@@ -255,7 +256,7 @@ const CartPage = () => {
 
   // 
   useEffect(() => {
-    if (!userData && !informasiPembeli.nama && !address.alamat) {
+    if ((!userData?.id && !informasiPembeli.nama && !address.alamat) || userData?.message === "jwt malformed") {
       Swal.fire({
         title: 'Apa anda sudah punya akun?',
         icon: 'warning',
@@ -267,6 +268,8 @@ const CartPage = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           history.push(!refCode ? "/login" : `/login?ref=${refCode}`);
+        } else {
+          setDisabledForm(false)
         }
       })
     } else {
@@ -413,7 +416,7 @@ const CartPage = () => {
             name="nama"
             value={informasiPembeli.nama}
             onChange={handleInput}
-            disabled={userData}
+            disabled={disabledForm}
           />
         </div>
         <div>
@@ -423,7 +426,7 @@ const CartPage = () => {
             name="email"
             value={informasiPembeli.email}
             onChange={handleInput}
-            disabled={userData}
+            disabled={disabledForm}
           />
         </div>
         <div>
@@ -436,11 +439,11 @@ const CartPage = () => {
             name="phone"
             value={informasiPembeli.phone}
             onChange={handleInput}
-            disabled={userData}
+            disabled={disabledForm}
           />
         </div>
         {
-          !userData && <>
+          (!userData?.id || userData?.message === "jwt malformed") && <>
             <div>
               <Typography className={classes.formText}>
                 Kata Sandi
@@ -451,7 +454,7 @@ const CartPage = () => {
                 name="pass"
                 value={informasiPembeli.pass}
                 onChange={handleInput}
-                disabled={userData}
+                disabled={disabledForm}
               />
             </div>
             <div>
@@ -464,7 +467,7 @@ const CartPage = () => {
                 name="rePass"
                 value={informasiPembeli.rePass}
                 onChange={handleInput}
-                disabled={userData}
+                disabled={disabledForm}
               />
             </div>
           </>

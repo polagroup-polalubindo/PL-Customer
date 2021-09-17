@@ -11,6 +11,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import ShoppingBasketIcon from "@material-ui/icons/ShoppingBasket";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
 import HelpIcon from "@material-ui/icons/Help";
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 
 import { useHistory, useLocation } from "react-router";
 import { Context } from "../../context/globalState";
@@ -55,6 +56,13 @@ export const BottomNav = () => {
     },
     {
       value: 3,
+      label: "Warranty",
+      icon: <VerifiedUserIcon />,
+      onClick: () =>
+        history.push(refCode ? `/warranty?ref=${refCode}` : "/warranty"),
+    },
+    {
+      value: 4,
       label: "Bantuan",
       icon: <HelpIcon />,
       link: "https://api.whatsapp.com/send?phone=+6281806152968&text=hi",
@@ -101,7 +109,10 @@ export const BottomNav = () => {
             onClick={item.onClick}
             href={item.link}
             target="_blank"
+            selected={item.value === value}
             style={{
+              paddingLeft: 0,
+              paddingRight: 0,
               color: item.value === value && item.onClick ? "red" : null,
             }}
           />

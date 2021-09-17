@@ -3,8 +3,8 @@ import React, { createContext, useEffect, useReducer } from "react";
 import Swal from "sweetalert2";
 import appReducers from "./appReducers";
 
-const baseUrl = "http://157.230.248.17";
-// const baseUrl = 'http://localhost:4000';
+// const baseUrl = "http://157.230.248.17";
+const baseUrl = 'http://localhost:4000';
 
 
 const initialState = {
@@ -32,7 +32,8 @@ const initialState = {
   dataProvince: [],
   dataCity: [],
   dataDistrict: [],
-  dataVoucher: []
+  dataVoucher: [],
+  dataWarranty: []
 };
 export const Context = createContext(initialState);
 export const ContextProvider = (props) => {
@@ -396,6 +397,58 @@ export const ContextProvider = (props) => {
     dispatch({ type: "FETCH_VOUCHER", payload: data.data });
   };
 
+  const fetchWarranty = async (query) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/warranty${query || ''}`, {
+      method: "GET",
+      headers: { access_token },
+    });
+
+    data = await data.json();
+    dispatch({ type: "SET_WARRANTY", payload: data.data });
+  };
+
+  const addWarranty = async (newdata, id) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/warranty`, {
+      method: "POST",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newdata),
+    });
+
+    data = await data.json();
+
+    if (data.message === "nomor machine already exist") {
+      Swal.fire({
+        title: `Warning`,
+        text: "Nomor mesin sudah terdaftar",
+        icon: "warning",
+      });
+      return { message: "error" };
+    } else if (data.message === "invoice not exist") {
+      Swal.fire({
+        title: `Warning`,
+        text: "Invoice tidak terdaftar",
+        icon: "warning",
+      });
+      return { message: "error" };
+    } else {
+      return { message: "success" }
+    }
+  };
+
+  const claimWarranty = async (newdata, id) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/warranty/${id}/claim`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newdata),
+    });
+
+    data = await data.json();
+    dispatch({ type: "SET_ADDRESS", payload: data.data });
+  };
+
   return (
     <Context.Provider
       value={{
@@ -420,6 +473,7 @@ export const ContextProvider = (props) => {
         dataCity: state.dataCity,
         dataDistrict: state.dataDistrict,
         dataVoucher: state.dataVoucher,
+        dataWarranty: state.dataWarranty,
         fetchBrands,
         fetchProduct,
         fetchTransaksiBeforePayment,
@@ -457,6 +511,9 @@ export const ContextProvider = (props) => {
         setAlamat,
         trackingOrder,
         fetchVoucher,
+        fetchWarranty,
+        addWarranty,
+        claimWarranty,
       }}
     >
       {props.children}

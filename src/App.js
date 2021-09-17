@@ -16,6 +16,9 @@ const CartPage = lazy(() => import("./components/cartPage"));
 const SnKPage = lazy(() => import("./components/SnK"));
 const AlamatPengiriman = lazy(() => import("./components/alamatPengiriman"));
 const RiwayatTransaksi = lazy(() => import("./components/riwayatTransaksi"));
+const Warranty = lazy(() => import("./components/warranty"));
+const FormWarranty = lazy(() => import("./components/warranty/tambah"));
+const ClaimWarranty = lazy(() => import("./components/warranty/claimWarranty"));
 const Profile = lazy(() => import("./components/profile"));
 
 const Pembayaran = lazy(() => import("./components/Pembayaran"));
@@ -43,6 +46,9 @@ function App() {
               <Route path="/cart" component={CartPage} />
               <Route path="/shipping" component={AlamatPengiriman} />
               <Route path="/profile" component={Profile} />
+              <Route path="/warranty/form" component={FormWarranty} />
+              <Route path="/warranty/claim" component={ClaimWarranty} />
+              <Route path="/warranty" component={Warranty} />
               <Route path="/riwayat-transaksi" component={RiwayatTransaksi} />
               <Route path="/s&k" component={SnKPage} />
               <Route path="/" component={HomePage} />

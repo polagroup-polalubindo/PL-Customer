@@ -54,9 +54,9 @@ export const CardProduct = ({ product }) => {
                 className={classes.logo_komisi}
               />
               <Grid className={classes.jml_komisi}>
-              <Typography variant="subtitle2" >
-                {product.komisiLevel1}
-              </Typography>
+                <Typography variant="subtitle2" >
+                  {product.komisiLevel1}
+                </Typography>
               </Grid>
             </>
           ) : null}
@@ -75,7 +75,7 @@ export const CardProduct = ({ product }) => {
                 <p style={{ margin: 0, marginRight: 5, color: 'gray', fontSize: 13, textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>Rp. {(product.hargaSatuan).toLocaleString("id-ID")},-</p>
                 <b style={{ margin: 0 }}>Rp. {(Math.round(product.hargaSatuan - Math.round((product.hargaSatuan * (product.discount / 100))))).toLocaleString("id-ID")},-</b>
               </Grid>
-              : <Typography component="p">
+              : <Typography variant="body2">
                 Rp. {product.hargaSatuan.toLocaleString("id-ID")},-
               </Typography>
           }

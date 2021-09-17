@@ -15,8 +15,8 @@ export const useStyles = makeStyles({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    bottom:55,
-    position:"fixed",
+    bottom: 55,
+    position: "fixed",
     maxWidth: "468px",
     padding: "0.5rem 1rem"
   },

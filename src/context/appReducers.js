@@ -116,7 +116,7 @@ export default (state, action) => {
         ...state,
         dataDistrict: action.payload,
       };
-      case "FETCH_VOUCHER":
+    case "FETCH_VOUCHER":
       return {
         ...state,
         dataVoucher: action.payload,
@@ -125,6 +125,11 @@ export default (state, action) => {
       return {
         ...state,
         services: action.payload,
+      };
+    case "SET_WARRANTY":
+      return {
+        ...state,
+        dataWarranty: action.payload,
       };
     case "LOGIN":
       return {
@@ -161,6 +166,12 @@ export default (state, action) => {
         ongkosKirim: 0,
         services: null,
         userData: null,
+        transaksiBeforePayment: [],
+        transaksiAfterPayment: [],
+        komisi: null,
+        transaksiKomisi: null,
+        informasiPembeli: { nama: "", email: "", phone: "" },
+        dataWarranty: []
       };
     default:
       return state;

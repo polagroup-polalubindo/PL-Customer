@@ -105,7 +105,7 @@ export default function CenteredGrid() {
             <Grid container>
               <Grid xs={3}>
                 <Avatar style={{ width: "3.5rem", height: "3.5rem", marginLeft: 20 }}>
-                  {dataUser.nama[0]}
+                  {dataUser.nama}
                 </Avatar>
               </Grid>
               {
