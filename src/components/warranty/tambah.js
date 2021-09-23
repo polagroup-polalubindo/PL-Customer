@@ -12,18 +12,20 @@ import { useHistory } from "react-router";
 import { Context } from "../../context/globalState";
 import Swal from "sweetalert2";
 
-const Warranty = () => {
+const Warranty = ({ location }) => {
   const classes = useStyles();
   const history = useHistory();
   const {
     refCode,
     addWarranty,
+    editWarranty,
     login,
     register,
     userData
   } = useContext(Context);
   const [noMachine, setNoMachine] = useState('')
   const [purchasePlace, setPurchasePlace] = useState('')
+  const [purchaseDate, setPurchaseDate] = useState('')
   const [invoice, setInvoice] = useState('')
 
   const [email, setEmail] = useState('')
@@ -34,19 +36,18 @@ const Warranty = () => {
   const [isEdit, setIsEdit] = useState(false);
 
 
-  // useEffect(async () => {
-  //   if (address && address.alamat) {
-  //     await setIsEdit(true)
-  //     await setJalan(address.alamat)
-  //     await setDetail(address.detail)
-  //     await setKelurahan(address.kelurahan)
-  //     await setProvinsi(address.provinsiId)
-  //     await setKota(address.kotaId)
-  //     await setKecamatan(address.kecamatanId)
-  //     await setKodepos(address.kodepos)
-  //     await setKeterangan(address.keterangan)
-  //   }
-  // }, [userData, address])
+  useEffect(() => {
+    async function fetch() { }
+    if (location.state?.data) {
+      console.log(location.state?.data)
+      setNoMachine(location.state?.data.noMachine)
+      setPurchasePlace(location.state?.data.purchasePlace)
+      setPurchaseDate(location.state?.data.purchaseDate.slice(0,10))
+      setInvoice(location.state?.data.invoice)
+      setIsEdit(true)
+    }
+    fetch()
+  }, [location.state]);
 
   useEffect(() => {
     if (!userData?.id || userData?.message === "jwt malformed") {
@@ -69,28 +70,14 @@ const Warranty = () => {
   async function onSubmit(e) {
     try {
       e.preventDefault();
-      if (!noMachine || !purchasePlace || !invoice) {
+      if (!noMachine || !purchasePlace || !purchaseDate || !invoice) {
         Swal.fire({
           title: "data belum lengkap",
           icon: "error",
         });
       } else {
-        // if (localStorage.getItem("access_token")) {
-        //   await updateAlamat({
-        //     alamat: jalan,
-        //     detail,
-        //     kelurahan,
-        //     kecamatan,
-        //     kota,
-        //     provinsi,
-        //     kodepos,
-        //     keterangan
-        //   });
-        // } else {
-
         if (!userData?.id || userData?.message === "jwt malformed") {
           if (pass !== rePass) {
-
             throw 'Password dan konfimasi password tidak sama'
           } else {
             const response = await register({ email: email, phone: phone, nama: nama, password: pass });
@@ -100,11 +87,25 @@ const Warranty = () => {
           }
         }
 
-        let submit = await addWarranty({
-          noMachine,
-          purchasePlace,
-          invoice,
-        })
+        let submit
+
+        if (isEdit) {
+          submit = await editWarranty({
+            noMachine,
+            purchasePlace,
+            purchaseDate,
+            invoice,
+          },
+            location.state?.data.id
+          )
+        } else {
+          submit = await addWarranty({
+            noMachine,
+            purchasePlace,
+            purchaseDate,
+            invoice,
+          })
+        }
 
         if (submit?.message !== "error") {
           history.push(!refCode ? "/warranty" : `/warranty?ref=${refCode}`);
@@ -224,6 +225,7 @@ const Warranty = () => {
             name="noMachine"
             value={noMachine}
             onChange={(e) => setNoMachine(e.target.value)}
+            disabled={isEdit}
           />
         </div>
 
@@ -239,6 +241,21 @@ const Warranty = () => {
             value={purchasePlace}
             onChange={(e) => setPurchasePlace(e.target.value)}
             placeholder="contoh: Online (Tokopedia, Website, etc) / Offline"
+          />
+        </div>
+
+        <div>
+          <Typography className={classes.formText}>
+            Tanggal Pembelian
+          </Typography>
+          <TextField
+            variant="outlined"
+            style={{ width: '100%' }}
+            size="small"
+            value={purchaseDate}
+            onChange={(e) => setPurchaseDate(e.target.value)}
+            type="date"
+            helperText="format: mm/dd/yyyy"
           />
         </div>
 

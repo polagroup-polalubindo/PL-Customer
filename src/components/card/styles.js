@@ -2,9 +2,11 @@ import { makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles({
   media: {
-    height: 0,
-    paddingTop: "56.25%", // 16:9
-    position:'relative'
+    height: '100%',
+    // maxHeight: 150,
+    width: '100%',
+    paddingTop: "56.25%", /// 16:9
+    position: 'relative'
   },
   produkTitle: {
     fontWeight: "bold",
@@ -23,7 +25,7 @@ export const useStyles = makeStyles({
     top: 16,
     right: 12,
     width: 20,
-    textAlign:'center'
+    textAlign: 'center'
   },
   logo_komisi: {
     position: "absolute",

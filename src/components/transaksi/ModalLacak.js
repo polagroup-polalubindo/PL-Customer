@@ -153,7 +153,7 @@ const ModalLacak = ({ open, handleClose, id }) => {
           overflowX: 'auto',
           position: 'relative'
         }}>
-          <CloseIcon style={{ position: 'absolute', right: 10, top: 10, cursor: 'pointer' }} onClick={handleClose} />
+          <CloseIcon style={{ position: 'absolute', right: 15, top: 17, cursor: 'pointer' }} onClick={handleClose} />
           <Grid style={{ padding: "20px 20px 10px" }}>
             <b style={{ fontSize: 13, color: 'gray' }}>Nomor Resi</b>
             <p style={{ margin: 0, marginTop: 5 }}>{data.noResi}</p>

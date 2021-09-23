@@ -3,8 +3,8 @@ import React, { createContext, useEffect, useReducer } from "react";
 import Swal from "sweetalert2";
 import appReducers from "./appReducers";
 
-// const baseUrl = "http://157.230.248.17";
-const baseUrl = 'http://localhost:4000';
+const baseUrl = "http://157.230.248.17";
+// const baseUrl = 'http://localhost:4000';
 
 
 const initialState = {
@@ -408,7 +408,7 @@ export const ContextProvider = (props) => {
     dispatch({ type: "SET_WARRANTY", payload: data.data });
   };
 
-  const addWarranty = async (newdata, id) => {
+  const addWarranty = async (newdata) => {
     const access_token = localStorage.getItem("access_token");
     let data = await fetch(baseUrl + `/warranty`, {
       method: "POST",
@@ -422,6 +422,13 @@ export const ContextProvider = (props) => {
       Swal.fire({
         title: `Warning`,
         text: "Nomor mesin sudah terdaftar",
+        icon: "warning",
+      });
+      return { message: "error" };
+    } else if (data.message === "machine number not registered") {
+      Swal.fire({
+        title: `Warning`,
+        text: "Nomor mesin tidak terdaftar",
         icon: "warning",
       });
       return { message: "error" };
@@ -447,6 +454,50 @@ export const ContextProvider = (props) => {
 
     data = await data.json();
     dispatch({ type: "SET_ADDRESS", payload: data.data });
+  };
+
+  const editWarranty = async (newdata, id) => {
+    const access_token = localStorage.getItem("access_token");
+    let data = await fetch(baseUrl + `/warranty/${id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newdata),
+    });
+    data = await data.json();
+
+    if (data.message === "nomor machine already exist") {
+      Swal.fire({
+        title: `Warning`,
+        text: "Nomor mesin sudah terdaftar",
+        icon: "warning",
+      });
+      return { message: "error" };
+    } else if (data.message === "machine number not registered") {
+      Swal.fire({
+        title: `Warning`,
+        text: "Nomor mesin tidak terdaftar",
+        icon: "warning",
+      });
+      return { message: "error" };
+    } else if (data.message === "invoice not exist") {
+      Swal.fire({
+        title: `Warning`,
+        text: "Invoice tidak terdaftar",
+        icon: "warning",
+      });
+      return { message: "error" };
+    } else {
+      return { message: "success" }
+    }
+  };
+
+  const deleteWarranty = async (id) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    await fetch(baseUrl + `/warranty/${id}`, {
+      method: "DELETE",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    return { message: "success" };
   };
 
   return (
@@ -514,6 +565,8 @@ export const ContextProvider = (props) => {
         fetchWarranty,
         addWarranty,
         claimWarranty,
+        editWarranty,
+        deleteWarranty,
       }}
     >
       {props.children}
