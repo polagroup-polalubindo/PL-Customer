@@ -159,7 +159,7 @@ const CartPage = () => {
 
         let created = new Date(
           Date.UTC(
-            2021,
+            new Date().getFullYear(),
             new Date().getMonth(),
             new Date().getDate(),
             new Date().getHours(),
@@ -169,7 +169,7 @@ const CartPage = () => {
         );
         let newDate = new Date(
           Date.UTC(
-            2021,
+            new Date().getFullYear(),
             new Date().getMonth(),
             new Date().getDate() + 1,
             new Date().getHours(),
